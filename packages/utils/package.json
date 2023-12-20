@@ -1,0 +1,15 @@
+{
+  "name": "iuly-utils",
+  "version": "0.0.0",
+  "description": "Shared Utils",
+  "main": "src/index",
+  "scripts": {
+    "tsc": "tsc"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "axios": "^1.6.2"
+  }
+}

@@ -1,0 +1,20 @@
+{
+    "[javascript]": {
+        "editor.tabSize": 2
+    },
+    "[typescript]": {
+        "editor.tabSize": 2
+    },
+    "typescript.tsdk": "node_modules/typescript/lib",
+    "todo-tree.highlights.customHighlight": {
+        "FIXME": {
+            "background": "#ffe100a9",
+            "foreground": "#000000"
+        },
+        "HACK": {
+            "background": "#ff842ba9",
+            "foreground": "#000000",
+            "type": "text"
+        }
+    }
+}
