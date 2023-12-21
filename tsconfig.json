@@ -60,6 +60,9 @@
     "paths": {
       "@iuly/iuly-utils": [
         "./packages/utils/src"
+      ],
+      "@iuly/iuly-models": [
+        "./packages/models/src"
       ]
     } /* A series of entries which re-map imports to lookup locations relative to the 'baseUrl'. */
   },

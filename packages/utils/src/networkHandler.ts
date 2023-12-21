@@ -13,6 +13,22 @@ export class NetworkHandler {
     });
   }
 
+  async get(url: string, config?: AxiosRequestConfig) {
+    return this.request(HTTPMethods.GET, url, undefined, config);
+  }
+
+  async post(url: string, body: any, config?: AxiosRequestConfig) {
+    return this.request(HTTPMethods.POST, url, body, config);
+  }
+
+  async patch(url: string, body: any, config?: AxiosRequestConfig) {
+    return this.request(HTTPMethods.PATCH, url, body, config);
+  }
+
+  async delete(url: string, config?: AxiosRequestConfig) {
+    return this.request(HTTPMethods.DELETE, url, undefined, config);
+  }
+
   private async request(method: HTTPMethods, url: string, body?: any, config?: AxiosRequestConfig): Promise<AxiosResponse> {
     try {
       return await this.axiosInstance.request({

@@ -3,6 +3,12 @@
   "version": "0.0.0",
   "description": "Shared Utils",
   "main": "src/index",
+  "directories": {
+    "lib": "lib"
+  },
+  "files": [
+    "lib"
+  ],
   "scripts": {
     "tsc": "tsc"
   },
@@ -11,6 +17,6 @@
   "license": "ISC",
   "dependencies": {
     "axios": "^1.6.2",
-    "@iuly/iuly-models": "1.0.0"
+    "@iuly/iuly-models": "^1.0.0"
   }
 }

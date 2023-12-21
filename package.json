@@ -20,7 +20,9 @@
   },
   "devDependencies": {
     "@types/node": "^20.10.5",
+    "chai": "^4.3.10",
     "lerna": "^8.0.1",
+    "mocha": "^10.2.0",
     "typescript": "^5.3.3"
   }
 }
