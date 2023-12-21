@@ -1,0 +1,15 @@
+{
+  "name": "@iuly/iuly-models",
+  "version": "1.0.0",
+  "description": "Models for Iuly",
+  "main": "lib/index.js",
+  "files": [
+    "lib"
+  ],
+  "scripts": {
+    "tsc": "tsc"
+  },
+  "keywords": [],
+  "author": "Pasquale Junior Montò",
+  "license": "ISC"
+}

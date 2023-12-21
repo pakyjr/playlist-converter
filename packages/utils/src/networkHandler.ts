@@ -1,4 +1,5 @@
 import axios, { AxiosInstance, AxiosRequestConfig, AxiosResponse } from 'axios'
+import { HTTPMethods } from '@iuly/iuly-models'
 
 export class NetworkHandler {
 
@@ -12,7 +13,7 @@ export class NetworkHandler {
     });
   }
 
-  private async request(method: string, url: string, body?: any, config?: AxiosRequestConfig): Promise<AxiosResponse> {
+  private async request(method: HTTPMethods, url: string, body?: any, config?: AxiosRequestConfig): Promise<AxiosResponse> {
     try {
       return await this.axiosInstance.request({
         method,
