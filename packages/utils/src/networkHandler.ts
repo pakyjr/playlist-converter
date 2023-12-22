@@ -38,7 +38,7 @@ export class NetworkHandler {
         ...config,
       });
     } catch (error) {
-      console.error(`NETWORK HANDLER: ${method} request to ${url} failed!`, error);
+      console.error(`NETWORK HANDLER: ${method} request to ${url} failed!\n ERROR LOG:`, error);
       throw error;
     }
   }
