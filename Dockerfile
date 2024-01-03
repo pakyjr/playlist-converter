@@ -11,10 +11,10 @@ COPY . .
 RUN npm install -g lerna
 
 # Bootstrap the packages - install all their dependencies and link any cross-dependencies
-RUN lerna bootstrap
+RUN npm install
 
 # Assuming you have a build script in your package.json that builds all packages
-RUN npm run build
+RUN npm run tsc
 
 # Expose a port if your application needs to accept HTTP requests
 EXPOSE 8080

@@ -1,0 +1,25 @@
+{
+  "name": "@iuly/iuly-api",
+  "version": "1.0.0",
+  "description": "API for Iuly Playlist Converter",
+  "main": "src/index",
+  "directories": {
+    "lib": "lib"
+  },
+  "files": [
+    "lib"
+  ],
+  "scripts": {
+    "tsc": "tsc"
+  },
+  "author": "Pasquale Jr Montò",
+  "license": "ISC",
+  "devDependencies": {
+    "@types/express": "^4.17.21",
+    "ts-node-dev": "^2.0.0",
+    "typescript": "^5.3.3"
+  },
+  "dependencies": {
+    "express-promise-router": "^4.1.1"
+  }
+}
