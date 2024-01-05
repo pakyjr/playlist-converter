@@ -15,7 +15,7 @@ export class MainRouter {
   }
 
   private configRouter() {
-    this.router.use();
+    this.router.use(cors());
     this.router.use("/playlist", this.playlistRouter.getRouter());
   }
 
