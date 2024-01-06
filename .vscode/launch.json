@@ -21,6 +21,24 @@
       "env": {
         "STAGE": "dev",
       }
+    },
+    {
+      "type": "node",
+      "request": "launch",
+      "name": "API TEST",
+      "skipFiles": [
+        "<node_internals>/**"
+      ],
+      "cwd": "${workspaceFolder}",
+      "args": [
+        "${workspaceFolder}/packages/api/lib/index.js"
+      ],
+      "outFiles": [
+        "${workspaceFolder}/**/*.js"
+      ],
+      "env": {
+        "STAGE": "dev",
+      }
     }
   ]
 }

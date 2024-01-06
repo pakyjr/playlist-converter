@@ -14,9 +14,9 @@ export class PlaylistRouter {
   }
 
   private configRouter() {
-    this.router.use(cors())
+    this.router.use(cors());
     //define routes later, and bind the controller logic to the router here.
-    this.router.route('/test').get(this.controller.testGet.bind(this.controller))
+    this.router.route('/test').get(this.controller.testGet.bind(this.controller));
   }
 
   public getRouter() {

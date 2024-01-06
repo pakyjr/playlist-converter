@@ -15,6 +15,6 @@ export class PlaylistUseCase {
       console.log(err)
     })
 
-    return await testPromise
+    return testPromise
   }
 }

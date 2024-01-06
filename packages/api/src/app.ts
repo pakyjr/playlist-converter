@@ -9,5 +9,10 @@ export default function createApp() {
 
   app.use(cors());
   app.use(compression());
-  app.use("/v1", mainRouter.getRouter())
+  app.use("/v1", mainRouter.getRouter());
+  app.use('*', (req, res) => {
+    res.status(404).send('Endpoint not found');
+  });
+
+  return app;
 }
