@@ -63,6 +63,12 @@
       ],
       "@iuly/iuly-models": [
         "./packages/models/src"
+      ],
+      "@iuly/iuly-api": [
+        "./packages/api/src"
+      ],
+      "@iuly/iuly-core": [
+        "./packages/core/src"
       ]
     } /* A series of entries which re-map imports to lookup locations relative to the 'baseUrl'. */
   },

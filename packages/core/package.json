@@ -1,0 +1,18 @@
+{
+  "name": "@iuly/iuly-core",
+  "version": "1.0.0",
+  "description": "Core Service for Iuly playlist-converter",
+  "main": "src/index",
+  "directories": {
+    "lib": "lib"
+  },
+  "files": [
+    "lib"
+  ],
+  "scripts": {
+    "tsc": "tsc"
+  },
+  "keywords": [],
+  "author": "Pasquale Junior Montò",
+  "license": "ISC"
+}
