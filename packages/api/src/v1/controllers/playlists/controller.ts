@@ -14,7 +14,8 @@ export class PlaylistController {
       const response = await this.useCase.testGet();
       ResponseHandler.ok(res, response)
     } catch (err) {
-      console.error(err) //FIXME Temporary, we should send to the client 400 
+      console.error(err);
+      ResponseHandler.badRequest(res, JSON.stringify(err));
     }
     // return next()
   }
