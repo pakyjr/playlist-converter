@@ -11,9 +11,9 @@ export class AuthenticationMiddleware {
     this.networkHandler = new NetworkHandler()
   }
 
-  readonly client_id: string = process.env.SPOTIFY_CLIENT_ID!;
-  readonly client_secret: string = process.env.SPOTIFY_SECRET!;
-  readonly redirect_uri: string = process.env.SPOTIFY_REDIRECT_URI!;
+  private readonly client_id: string = process.env.SPOTIFY_CLIENT_ID!;
+  private readonly client_secret: string = process.env.SPOTIFY_SECRET!;
+  private readonly redirect_uri: string = process.env.SPOTIFY_REDIRECT_URI!;
 
   spotifyAuth(req: Request, res: Response, next: NextFunction) {
     let url: string = `https://accounts.spotify.com/authorize`

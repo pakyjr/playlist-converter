@@ -36,7 +36,7 @@
         "STAGE": "dev",
         "PORT": "8080",
         "SPOTIFY_CLIENT_ID": "0051c80c3951437ea07b02a123abd692",
-        "SPOTIFY_REDIRECT_URI": "https://localhost:8080/v1/users/spotify/callback"
+        "SPOTIFY_REDIRECT_URI": "http://localhost:8080/v1/users/spotify/callback"
       },
     },
     {
