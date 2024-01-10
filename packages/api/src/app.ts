@@ -1,4 +1,4 @@
-import express, { Application, Request, Response } from "express";
+import express from "express";
 import cors from 'cors'
 import compression from 'compression'
 import { MainRouter } from './v1/mainRouter'
