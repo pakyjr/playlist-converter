@@ -6,11 +6,7 @@ export class NetworkHandler {
   private axiosInstance: AxiosInstance;
 
   constructor() {
-    this.axiosInstance = axios.create({
-      headers: {
-        'Content-Type': 'application/json'
-      },
-    });
+    this.axiosInstance = axios.create();
   }
 
   async get(url: string, config?: AxiosRequestConfig) {
