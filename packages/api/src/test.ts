@@ -1,6 +1,6 @@
 import { addQueryStringToURL } from './utils'
 
-(function () {
+(() => {
   testQueryStringInUrl()
 })()
 
