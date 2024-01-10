@@ -1,29 +1,39 @@
 // import {} from './useCase'
 import { NextFunction, Request, Response } from 'express';
 import { ResponseHandler } from '../../../responseHandler';
-import { AuthenticationMiddleware } from '../../../middleware/authentication'
+import { addQueryStringToURL } from '../../../utils';
+import { UsersUseCase } from './useCase'
 
 export class UsersController {
-  // private useCase: UsersUsecase;
-  private authMiddleware: AuthenticationMiddleware;
+  private useCase: UsersUseCase;
 
   constructor() {
-    this.authMiddleware = new AuthenticationMiddleware()
-    // this.useCase = new UsersUsecase();
+    this.useCase = new UsersUseCase();
   }
 
   spotifyAuth(req: Request, res: Response, next: NextFunction) {
-    this.authMiddleware.spotifyAuth(req, res, next);
+    let urlWithQueryParams: string = this.useCase.generateSpotifyAuthURL();
+    res.redirect(urlWithQueryParams);
     return next()
   }
 
   async spotifyAuthCallback(req: Request, res: Response, next: NextFunction) {
     try {
-      await this.authMiddleware.spotifyAuthCallback(req, res, next);
+      let code: string | null = req.query.code ? (req.query.code).toString() : null;
+      let state: string | null = req.query.state ? (req.query.state).toString() : null;
+
+      if (code && state) {
+        await this.useCase.getSpotifyAuthToken(code);
+      } else {
+        res.redirect('/#' + addQueryStringToURL(undefined, {
+          error: 'state_mismatch'
+        }));
+        throw `USERS CONTROLLER (spotifyAuthCallback): code or state missing!`
+      }
+
     } catch (err) {
       ResponseHandler.badRequest(res, JSON.stringify(err));
     }
     return next();
   }
-
 }
