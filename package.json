@@ -14,7 +14,7 @@
   },
   "description": "Root project for Iuly Playlist Converter",
   "scripts": {
-    "project-init": "npm install",
+    "build": "npm install && lerna run tsc",
     "tsc": "lerna run tsc",
     "clean": "lerna clean"
   },
@@ -31,6 +31,7 @@
   },
   "dependencies": {
     "compression": "^1.7.4",
-    "cors": "^2.8.5"
+    "cors": "^2.8.5",
+    "dotenv": "^16.3.1"
   }
 }

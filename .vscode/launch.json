@@ -1,8 +1,4 @@
 {
-  // Use IntelliSense to learn about possible attributes.
-  // Hover to view descriptions of existing attributes.
-  // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
-  "version": "0.2.0",
   "configurations": [
     {
       "type": "node",
@@ -25,21 +21,47 @@
     {
       "type": "node",
       "request": "launch",
-      "name": "API TEST",
+      "name": "API LOCAL",
       "skipFiles": [
         "<node_internals>/**"
       ],
       "cwd": "${workspaceFolder}",
       "args": [
-        "${workspaceFolder}/packages/api/lib/index.js"
+        "${workspaceFolder}/packages/api/lib/api/src/index.js"
       ],
       "outFiles": [
         "${workspaceFolder}/**/*.js"
       ],
       "env": {
         "STAGE": "dev",
-        "PORT": "8080"
-      }
-    }
+        "PORT": "8080",
+        "SPOTIFY_CLIENT_ID": "0051c80c3951437ea07b02a123abd692",
+        "SPOTIFY_REDIRECT_URI": "http://localhost:8080/v1/users/spotify/callback",
+        "SPOTIFY_TOKEN_URL": "https://accounts.spotify.com/api/token",
+        "SPOTIFY_SECRET": "5c29bb689fb04dffa9cc96ba6cb578bf"
+      },
+    },
+    {
+      "type": "node",
+      "request": "launch",
+      "name": "API TEST",
+      "skipFiles": [
+        "<node_internals>/**"
+      ],
+      "cwd": "${workspaceFolder}",
+      "args": [
+        "${workspaceFolder}/packages/api/lib/test.js"
+      ],
+      "outFiles": [
+        "${workspaceFolder}/**/*.js"
+      ],
+      "env": {
+        "STAGE": "dev",
+        "PORT": "8080",
+        "SPOTIFY_CLIENT_ID": "0051c80c3951437ea07b02a123abd692",
+        "SPOTIFY_REDIRECT_URI": "http://localhost:8080/v1/users/spotify/callback",
+        "SPOTIFY_TOKEN_URL": "https://accounts.spotify.com/api/token"
+      },
+    },
   ]
 }
