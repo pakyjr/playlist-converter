@@ -1,6 +1,7 @@
 import { NextFunction, Request, Response } from 'express';
 import { addQueryStringToURL, generateRandomString } from '../utils'
 import { NetworkHandler } from '@iuly/iuly-utils'
+import { SpotifyToken } from '@iuly/iuly-models'
 
 export class AuthenticationMiddleware {
 
@@ -31,7 +32,7 @@ export class AuthenticationMiddleware {
     return urlWithQueryParams
   }
 
-  async spotifyAuthCallback(code: string) {
+  async spotifyAuthCallback(code: string): Promise<SpotifyToken> {
     let url: string = process.env.SPOTIFY_TOKEN_URL!;
 
     let params = new URLSearchParams();

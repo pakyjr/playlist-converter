@@ -1,4 +1,5 @@
 import { AuthenticationMiddleware } from '../../../middleware/authentication'
+import { SpotifyToken } from '@iuly/iuly-models'
 
 export class UsersUseCase {
   private authMiddleware: AuthenticationMiddleware;
@@ -12,7 +13,7 @@ export class UsersUseCase {
   }
 
   async getSpotifyAuthToken(code: string) {
-    let spotifyData = await this.authMiddleware.spotifyAuthCallback(code);
+    let spotifyData: SpotifyToken = await this.authMiddleware.spotifyAuthCallback(code);
     console.log(spotifyData);
   }
 }
