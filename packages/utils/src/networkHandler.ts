@@ -5,12 +5,8 @@ export class NetworkHandler {
 
   private axiosInstance: AxiosInstance;
 
-  constructor(defaultHeader: string = 'application/json') {
-    this.axiosInstance = axios.create({
-      headers: {
-        'Content-Type': defaultHeader
-      },
-    });
+  constructor() {
+    this.axiosInstance = axios.create();
   }
 
   async get(url: string, config?: AxiosRequestConfig) {

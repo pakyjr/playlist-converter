@@ -13,6 +13,8 @@ async function randomPOST() {
 }
 
 function testEnv() {
+  console.log('start')
+  // dotenv.config({ path: findEnv() });
   console.log(process.env.SPOTIFY_SECRET);
   console.log('stop')
 }

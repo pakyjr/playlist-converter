@@ -15,6 +15,7 @@ export class UsersController {
 
   spotifyAuth(req: Request, res: Response, next: NextFunction) {
     this.authMiddleware.spotifyAuth(req, res, next);
+    return next()
   }
 
   async spotifyAuthCallback(req: Request, res: Response, next: NextFunction) {
@@ -23,6 +24,7 @@ export class UsersController {
     } catch (err) {
       ResponseHandler.badRequest(res, JSON.stringify(err));
     }
+    return next();
   }
 
 }

@@ -2,14 +2,12 @@ import { NextFunction, Request, Response } from 'express';
 import { ResponseHandler } from '../responseHandler';
 import { addQueryStringToURL, generateRandomString } from '../utils'
 import { NetworkHandler } from '@iuly/iuly-utils'
-import * as dotenv from 'dotenv'
 
 export class AuthenticationMiddleware {
 
   private networkHandler: NetworkHandler;
 
   constructor() {
-    dotenv.config({ path: '../../../../.env' })
     this.networkHandler = new NetworkHandler()
   }
 
@@ -32,12 +30,9 @@ export class AuthenticationMiddleware {
     });
 
     res.redirect(urlWithQueryParams);
-    return next()
   }
 
-  async spotifyAuthCallback(req: Request, res: Response, next: NextFunction) {
-    const networkHandler = new NetworkHandler('application/x-www-form-urlencoded');
-
+  async spotifyAuthCallback(req: Request, res: Response, _next: NextFunction) {
     let code = req.query.code || null;
     let state = req.query.state || null;
 
@@ -50,21 +45,18 @@ export class AuthenticationMiddleware {
 
       // let body = `code=${code}&redirect_uri=${this.redirect_uri}&grant_type=authorization_code`
       let params = new URLSearchParams();
-      params.append('code', JSON.stringify(code))
+      params.append('code', code as string)
       params.append('redirect_uri', this.redirect_uri);
       params.append('grant_type', 'authorization_code');
 
       let body = params.toString()
+      let headers = {
+        'Content-Type': 'application/x-www-form-urlencoded',
+        'Authorization': `Basic ${Buffer.from(`${this.client_id}:${this.client_secret}`).toString('base64')}`
+      }
 
-      const result = await networkHandler.post(url, body, {
-        headers: {
-          'Authorization': `Basic ${Buffer.from(`${this.client_id}:${this.client_secret}`).toString('base64')}`
-        }
-      })
-
-      let data = result.data;
-      console.log(data)
+      const response = await this.networkHandler.post(url, body, { headers })
+      return response.data.access_token
     }
-    return next()
   }
 }
