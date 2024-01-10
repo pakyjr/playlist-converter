@@ -1,16 +1,15 @@
 // import {} from './useCase'
 import { NextFunction, Request, Response } from 'express';
 import { ResponseHandler } from '../../../responseHandler';
-import { addQueryStringToURL } from '../../../utils'
 import { AuthenticationMiddleware } from '../../../middleware/authentication'
 
 export class UsersController {
-  // private useCase: PlaylistUseCase;
+  // private useCase: UsersUsecase;
   private authMiddleware: AuthenticationMiddleware;
 
   constructor() {
     this.authMiddleware = new AuthenticationMiddleware()
-    // this.useCase = new PlaylistUseCase();
+    // this.useCase = new UsersUsecase();
   }
 
   spotifyAuth(req: Request, res: Response, next: NextFunction) {
