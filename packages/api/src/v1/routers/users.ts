@@ -3,14 +3,15 @@ import ExpressPromiseRouter from "express-promise-router";
 import cors from 'cors'
 import { UsersController } from '../controllers/users/controller'
 import { BaseRouter } from '../../base';
+import { CoreIndex } from '@iuly/iuly-core';
 
 export class UsersRouter extends BaseRouter {
   private router: Router;
   private controller: UsersController;
 
-  constructor() {
+  constructor(core: CoreIndex) {
     super()
-    this.controller = new UsersController();
+    this.controller = new UsersController(core);
     this.router = ExpressPromiseRouter();
     this.configRouter();
   }

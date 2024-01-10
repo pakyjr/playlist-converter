@@ -2,28 +2,35 @@
 import { NextFunction, Request, Response } from 'express';
 import { ResponseHandler } from '../../../responseHandler';
 import { addQueryStringToURL } from '../../../utils';
-import { UsersUseCase } from './useCase'
+import { CoreIndex } from 'packages/core/src';
+import { UsersUseCase } from './useCase';
+import { v4 as uuidv4 } from 'uuid'
 
 export class UsersController {
   private useCase: UsersUseCase;
 
-  constructor() {
-    this.useCase = new UsersUseCase();
+  constructor(core: CoreIndex) {
+    this.useCase = new UsersUseCase(core);
   }
 
   spotifyAuth(req: Request, res: Response, next: NextFunction) {
-    let urlWithQueryParams: string = this.useCase.generateSpotifyAuthURL();
+    const sessionId: string = uuidv4();
+    const urlWithQueryParams: string = this.useCase.generateSpotifyAuthURL();
+    res.cookie('sessionId', sessionId, { httpOnly: true, secure: true });
     res.redirect(urlWithQueryParams);
     return next()
   }
 
   async spotifyAuthCallback(req: Request, res: Response, next: NextFunction) {
     try {
-      let code: string | null = req.query.code ? (req.query.code).toString() : null;
-      let state: string | null = req.query.state ? (req.query.state).toString() : null;
+      const code: string | null = req.query.code ? (req.query.code).toString() : null;
+      const state: string | null = req.query.state ? (req.query.state).toString() : null;
+
+      const sessionId: string | null = req.cookies['sessionId'];
+      if (!sessionId) throw `USERS CONTROLLER (spotifyAuthCallback): sessionId missing!`
 
       if (code && state) {
-        await this.useCase.getSpotifyAuthToken(code);
+        await this.useCase.getSpotifyAuthToken(code, sessionId);
       } else {
         res.redirect('/#' + addQueryStringToURL(undefined, {
           error: 'state_mismatch'

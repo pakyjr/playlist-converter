@@ -2,9 +2,12 @@ import express from "express";
 import cors from 'cors'
 import compression from 'compression'
 import { MainRouter } from './v1/mainRouter'
+import { CoreIndex, CoreSingleton } from "@iuly/iuly-core";
 
 export default function createApp() {
-  const mainRouter: MainRouter = new MainRouter();
+  const coreIndex: CoreIndex = CoreSingleton.getCore()
+
+  const mainRouter: MainRouter = new MainRouter(coreIndex);
   const app = express();
 
   app.use(cors());
