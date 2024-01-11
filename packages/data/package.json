@@ -2,7 +2,7 @@
   "name": "@iuly/iuly-dal",
   "version": "0.0.0",
   "description": "Data Layer interfacing with external APIs or Database for Iuly",
-  "main": "lib/data/src/index.js",
+  "main": "lib/src/index.js",
   "directories": {
     "lib": "lib"
   },
@@ -15,6 +15,9 @@
   "keywords": [],
   "author": "Pasquale Junior Montò",
   "license": "ISC",
-  "dependencies": {},
-  "devDependencies": {}
+  "devDependencies": {
+    "@iuly/iuly-models": "1.0.0",
+    "@iuly/iuly-interfaces": "0.0.0"
+  },
+  "dependencies": {}
 }

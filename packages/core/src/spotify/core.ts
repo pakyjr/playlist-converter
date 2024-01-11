@@ -1,10 +1,11 @@
-
+import { SpotifyDAL } from '@iuly/iuly-dal'
+import { SpotifyDALInterface } from '@iuly/iuly-interfaces'
 
 export class SpotifyCore {
 
-  constructor() { }
+  constructor(private spotifyDal: SpotifyDALInterface) { }
 
-  async addSessionToken(sessionId: string) {
-    //TODO SETUP DATA LAYER AND STORE SESSION THERE!
+  async addSessionToken(token: string, sessionId: string) {
+    this.spotifyDal.addSessionToken(token, sessionId);
   }
 }

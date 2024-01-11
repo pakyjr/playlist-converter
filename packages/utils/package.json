@@ -17,6 +17,8 @@
   "license": "ISC",
   "dependencies": {
     "@iuly/iuly-models": "^1.0.0",
+    "@iuly/iuly-dal": "^0.0.0",
+    "@iuly/iuly-interfaces": "^0.0.0",
     "axios": "^1.6.2"
   },
   "devDependencies": {

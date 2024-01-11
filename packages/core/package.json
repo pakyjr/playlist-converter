@@ -12,6 +12,13 @@
   "scripts": {
     "tsc": "tsc"
   },
+  "devDependencies": {},
+  "dependencies": {
+    "@iuly/iuly-dal": "0.0.0",
+    "@iuly/iuly-interfaces": "0.0.0",
+    "@iuly/iuly-utils": "0.0.0",
+    "@iuly/iuly-models": "1.0.0"
+  },
   "keywords": [],
   "author": "Pasquale Junior Montò",
   "license": "ISC"
