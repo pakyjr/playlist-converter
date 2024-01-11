@@ -1,0 +1,20 @@
+{
+  "name": "@iuly/iuly-dal",
+  "version": "0.0.0",
+  "description": "Data Layer interfacing with external APIs or Database for Iuly",
+  "main": "lib/data/src/index.js",
+  "directories": {
+    "lib": "lib"
+  },
+  "files": [
+    "lib"
+  ],
+  "scripts": {
+    "tsc": "tsc"
+  },
+  "keywords": [],
+  "author": "Pasquale Junior Montò",
+  "license": "ISC",
+  "dependencies": {},
+  "devDependencies": {}
+}

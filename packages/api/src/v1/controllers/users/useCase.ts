@@ -1,7 +1,6 @@
 import { AuthenticationMiddleware } from '../../../middleware/authentication'
 import { SpotifyToken } from '@iuly/iuly-models'
 import { CoreIndex } from '@iuly/iuly-core'
-import { redisClient } from '@iuly/iuly-utils'
 
 export class UsersUseCase {
   private authMiddleware: AuthenticationMiddleware;
