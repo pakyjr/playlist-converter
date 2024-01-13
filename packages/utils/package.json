@@ -2,7 +2,7 @@
   "name": "@iuly/iuly-utils",
   "version": "0.0.0",
   "description": "Shared Utils",
-  "main": "lib/utils/src/index.js",
+  "main": "lib/index",
   "directories": {
     "lib": "lib"
   },

@@ -2,7 +2,7 @@
   "name": "@iuly/iuly-dal",
   "version": "0.0.0",
   "description": "Data Layer interfacing with external APIs or Database for Iuly",
-  "main": "lib/data/src/index",
+  "main": "lib/index",
   "directories": {
     "lib": "lib"
   },
@@ -17,7 +17,8 @@
   "license": "ISC",
   "devDependencies": {
     "@iuly/iuly-models": "1.0.0",
-    "@iuly/iuly-interfaces": "0.0.0"
+    "@iuly/iuly-interfaces": "0.0.0",
+    "@iuly/iuly-utils": "0.0.0"
   },
   "dependencies": {}
 }

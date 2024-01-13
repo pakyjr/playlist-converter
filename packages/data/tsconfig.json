@@ -2,6 +2,7 @@
   "extends": "../../tsconfig.json",
   "compilerOptions": {
     "outDir": "./lib",
+    "rootDir": "./src",
     "composite": true
   },
   "references": [
@@ -10,11 +11,13 @@
     },
     {
       "path": "../interfaces"
+    },
+    {
+      "path": "../utils"
     }
   ],
   "include": [
-    "./src",
-    "./test.ts"
+    "src/**/*"
   ],
   "exclude": [
     "./lib/**/*"

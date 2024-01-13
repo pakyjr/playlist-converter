@@ -1,4 +1,4 @@
-import { NetworkHandler } from './src/index'
+import { NetworkHandler } from './index'
 
 const handler: NetworkHandler = new NetworkHandler();
 

@@ -2,7 +2,7 @@
   "name": "@iuly/iuly-models",
   "version": "1.0.0",
   "description": "Models for Iuly",
-  "main": "lib/index.js",
+  "main": "lib/index",
   "files": [
     "lib"
   ],

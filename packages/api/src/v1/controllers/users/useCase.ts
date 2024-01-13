@@ -16,8 +16,8 @@ export class UsersUseCase {
   }
 
   async getSpotifyAuthToken(code: string, sessionId: string) {
-    let spotifyData: SpotifyToken = await this.authMiddleware.spotifyAuthCallback(code);
-    this.core.spotifyCore.addSessionToken(spotifyData.access_token, sessionId);
+    const spotifyToken: SpotifyToken = await this.authMiddleware.spotifyAuthCallback(code);
+    this.core.spotifyCore.addSessionToken(spotifyToken, sessionId);
   }
 
   //END REGION
