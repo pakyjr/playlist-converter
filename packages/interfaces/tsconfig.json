@@ -1,10 +1,19 @@
 {
   "extends": "../../tsconfig.json",
   "compilerOptions": {
-    "outDir": "./lib"
+    "outDir": "./lib",
+    "composite": true
   },
+  "references": [
+    {
+      "path": "../models"
+    }
+  ],
   "include": [
     "./src",
     "./test.ts"
   ],
+  "exclude": [
+    "./lib/**/*"
+  ]
 }

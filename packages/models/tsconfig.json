@@ -2,11 +2,14 @@
   "extends": "../../tsconfig.json",
   "compilerOptions": {
     "outDir": "./lib",
-    "incremental": false,
-    "noEmit": false
+    "composite": true
   },
+  "references": [],
   "include": [
     "./src",
     "./test.ts"
+  ],
+  "exclude": [
+    "./lib/**/*"
   ]
 }

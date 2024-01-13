@@ -2,7 +2,7 @@
   "name": "@iuly/iuly-dal",
   "version": "0.0.0",
   "description": "Data Layer interfacing with external APIs or Database for Iuly",
-  "main": "lib/src/index.js",
+  "main": "lib/data/src/index",
   "directories": {
     "lib": "lib"
   },

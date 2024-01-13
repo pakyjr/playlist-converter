@@ -16,12 +16,12 @@
   "author": "Pasquale Junior Montò",
   "license": "ISC",
   "dependencies": {
-    "@iuly/iuly-models": "^1.0.0",
-    "@iuly/iuly-dal": "^0.0.0",
-    "@iuly/iuly-interfaces": "^0.0.0",
     "axios": "^1.6.2"
   },
   "devDependencies": {
-    "@types/chai": "^4.3.11"
+    "@types/chai": "^4.3.11",
+    "@iuly/iuly-models": "^1.0.0",
+    "@iuly/iuly-dal": "^0.0.0",
+    "@iuly/iuly-interfaces": "^0.0.0"
   }
 }

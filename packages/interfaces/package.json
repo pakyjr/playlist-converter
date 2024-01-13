@@ -2,7 +2,7 @@
   "name": "@iuly/iuly-interfaces",
   "version": "0.0.0",
   "description": "Interfaces",
-  "main": "lib/index.js",
+  "main": "lib/interfaces/src/index.js",
   "directories": {
     "lib": "lib"
   },
@@ -15,6 +15,8 @@
   "keywords": [],
   "author": "Pasquale Junior Montò",
   "license": "ISC",
-  "dependencies": {},
-  "devDependencies": {}
+  "devDependencies": {
+    "@iuly/iuly-models": "1.0.0"
+  },
+  "dependencies": {}
 }
