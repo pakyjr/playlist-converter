@@ -2,7 +2,7 @@
   "name": "@iuly/iuly-interfaces",
   "version": "0.0.0",
   "description": "Interfaces",
-  "main": "lib/index",
+  "main": "lib/index.js",
   "directories": {
     "lib": "lib"
   },

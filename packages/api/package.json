@@ -2,7 +2,7 @@
   "name": "@iuly/iuly-api",
   "version": "1.0.0",
   "description": "API for Iuly Playlist Converter",
-  "main": "src/index",
+  "main": "lib/index.js",
   "directories": {
     "lib": "lib"
   },

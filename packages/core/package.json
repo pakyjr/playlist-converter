@@ -2,7 +2,7 @@
   "name": "@iuly/iuly-core",
   "version": "1.0.0",
   "description": "Core Service for Iuly playlist-converter",
-  "main": "src/index",
+  "main": "lib/index.js",
   "directories": {
     "lib": "lib"
   },

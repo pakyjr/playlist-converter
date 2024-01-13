@@ -9,4 +9,10 @@ export class SpotifyCore {
   async addSessionToken(token: SpotifyToken, sessionId: string) {
     this.spotifyDal.addSessionToken(token, sessionId);
   }
+
+  async getSessionToken(sessionId: string): Promise<string | null> {
+    let token = await this.spotifyDal.getToken(sessionId);
+    if (token) return token
+    return null
+  }
 }

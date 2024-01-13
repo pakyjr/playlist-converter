@@ -27,7 +27,7 @@
       ],
       "cwd": "${workspaceFolder}",
       "args": [
-        "${workspaceFolder}/packages/api/lib/api/src/index.js"
+        "${workspaceFolder}/packages/api/lib/index.js"
       ],
       "outFiles": [
         "${workspaceFolder}/**/*.js"

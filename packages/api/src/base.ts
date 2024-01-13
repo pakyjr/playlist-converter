@@ -1,4 +1,4 @@
-import { Application, NextFunction, Request, Response } from "express";
+import { NextFunction, Request, Response } from "express";
 
 export abstract class BaseRouter {
 
