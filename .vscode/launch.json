@@ -35,10 +35,12 @@
       "env": {
         "STAGE": "dev",
         "PORT": "8080",
+        "BASE_URL": "http://localhost:8080",
         "SPOTIFY_CLIENT_ID": "0051c80c3951437ea07b02a123abd692",
         "SPOTIFY_REDIRECT_URI": "http://localhost:8080/v1/users/spotify/callback",
         "SPOTIFY_TOKEN_URL": "https://accounts.spotify.com/api/token",
-        "SPOTIFY_SECRET": "5c29bb689fb04dffa9cc96ba6cb578bf"
+        "SPOTIFY_SECRET": "5c29bb689fb04dffa9cc96ba6cb578bf",
+        "EXPRESS_SESSION_SECRET": "3a79c12f-b555-4dc6-adca-fb7811fec924"
       },
     },
     {

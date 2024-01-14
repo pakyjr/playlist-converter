@@ -17,11 +17,10 @@ export class PlaylistRouter extends BaseRouter {
 
   private configRouter() {
     this.router.use(cors());
-    //define routes later, and bind the controller logic to the router here.
-    this.router.route('/test').get(this.controller.testGet.bind(this.controller), this.sendResponse);
+    this.router.route('/send').get(this.controller.testGet.bind(this.controller));
   }
 
   public getRouter() {
     return this.router
   }
-}
+} 

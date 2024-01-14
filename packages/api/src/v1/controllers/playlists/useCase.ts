@@ -6,7 +6,7 @@ export class PlaylistUseCase {
 
   async testGet(): Promise<string> {
     let testPromise: Promise<string> = new Promise((res, rej) => {
-      res("hello");
+      res("auth successful, paste the playlists");
     });
 
     testPromise.then((res: string) => {
