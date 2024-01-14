@@ -33,6 +33,7 @@ export class UsersController {
 
       if (code && state) {
         await this.useCase.getSpotifyAuthToken(code, sessionId);
+        res.send('auth success')
       } else {
         res.redirect('/#' + addQueryStringToURL(undefined, {
           error: 'state_mismatch'
