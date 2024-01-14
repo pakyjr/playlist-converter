@@ -14,9 +14,7 @@ export class UsersController {
   }
 
   spotifyAuth(req: Request, res: Response, next: NextFunction) {
-    const sessionId: string = uuidv4();
     const urlWithQueryParams: string = this.useCase.generateSpotifyAuthURL();
-    res.cookie('sessionId', sessionId, { httpOnly: true, secure: true });
     res.redirect(urlWithQueryParams);
     return next()
   }
@@ -26,10 +24,8 @@ export class UsersController {
       const code: string | null = req.query.code ? (req.query.code).toString() : null;
       const state: string | null = req.query.state ? (req.query.state).toString() : null;
 
-      // const sessionId: string | null | undefined = req.cookies['sessionId'];
-      // if (!sessionId) throw `USERS CONTROLLER (spotifyAuthCallback): sessionId missing!`
-
-      let sessionId = "123"
+      const sessionId: string = req.sessionID
+      if (!sessionId) throw `USERS CONTROLLER (spotifyAuthCallback): sessionId missing!`
 
       if (code && state) {
         await this.useCase.getSpotifyAuthToken(code, sessionId);
