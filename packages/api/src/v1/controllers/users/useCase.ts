@@ -15,11 +15,10 @@ export class UsersUseCase {
     return this.authMiddleware.generateSpotifyAuthURL();
   }
 
-  async getSpotifyAuthToken(code: string, sessionId: string) {
+  async generateSpotifyAuthToken(code: string, sessionId: string): Promise<string> {
     const spotifyToken: SpotifyToken = await this.authMiddleware.spotifyAuthCallback(code);
     await this.core.spotifyCore.addSessionToken(spotifyToken, sessionId);
-    let testToken = await this.core.spotifyCore.getSessionToken(sessionId);
-    console.log(testToken);
+    return spotifyToken.access_token
   }
 
   //END REGION

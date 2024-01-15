@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <link rel="stylesheet" type="text/css" href="styles.css">
+</head>
+
+<body>
+  <header>
+    <h1 id="logo">Iuly</h1>
+  </header>
+
+  <div class="playlist-container">
+    <input type="text" id="playlist" name="playlist" placeholder="Enter playlist URL">
+    <button onclick="submitPlaylist();">Submit</button>
+  </div>
+
+  <script>
+    function submitPlaylist() {
+      const playlistUrl = document.getElementById('playlist').value;
+      fetch('http://localhost:8080/v1/playlist/sent', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ url: playlistUrl })
+      })
+        .then(response => {
+          if (response.ok) {
+            return response.json();
+          } else {
+            throw new Error('Invalid URL');
+          }
+        })
+        .then(data => {
+          // Assuming the server sends back a JSON with a status property
+          if (data.status === 'success') {
+            window.location.href = '/success'; // Redirect to the success page
+          } else {
+            window.location.href = '/invalid'; // Redirect to the invalid URL page
+          }
+        })
+        .catch((error) => {
+          console.error('Error:', error);
+          window.location.href = '/invalid'; // Redirect to the invalid URL page on error
+        });
+    }
+  </script>
+</body>
+
+</html>

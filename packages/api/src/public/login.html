@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <link rel="stylesheet" type="text/css" href="styles.css">
+</head>
+
+<body>
+  <header>
+    <h1 id="logo">Iuly</h1>
+  </header>
+
+  <div class="login-container">
+    <button id="loginButton">Login</button>
+  </div>
+
+  <script>
+    document.getElementById('loginButton').addEventListener('click', function () {
+      window.location.href = 'http://localhost:8080/v1/users/login/spotify';
+    });
+  </script>
+</body>
+
+</html>

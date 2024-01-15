@@ -26,7 +26,8 @@ export class AuthenticationMiddleware {
       client_id: this.client_id,
       redirect_uri: this.redirect_uri,
       scope,
-      state
+      state,
+      show_dialog: true
     });
 
     return urlWithQueryParams
