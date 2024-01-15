@@ -42,7 +42,7 @@ export class UsersController {
 
       if (code && state) {
         await this.useCase.generateSpotifyAuthToken(code, sessionId);
-        res.redirect(`${process.env.BASE_URL}/v1/playlist/send/sendPlaylist.html`); //TODO the user should access this page only if authenticated. 
+        res.redirect(`${process.env.BASE_URL}/v1/playlist/send`); //TODO the user should access this page only if authenticated. 
       } else {
         res.redirect('/#' + addQueryStringToURL(undefined, {
           error: 'state_mismatch'

@@ -13,7 +13,7 @@ export class PlaylistController {
 
   send(req: Request, res: Response, next: NextFunction) {
     try {
-      let filePath = `/Users/pakyjr/projects/playlist-converter/backend/packages/api/src/public/${req.params.fileName}`; //FIXME temporary path
+      let filePath = `/Users/pakyjr/projects/playlist-converter/backend/packages/api/src/public/sendPlaylist.html`; //FIXME temporary path
       let checkFile = fs.existsSync(filePath);
       if (checkFile) res.sendFile(filePath); //TODO FIX THE PATH 
       else throw new Error('non existent file')

@@ -1,20 +1,40 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 
 <head>
-  <link rel="stylesheet" type="text/css" href="styles.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@1/css/pico.min.css">
+  <title>Iuly - Playlist Insertion</title>
 </head>
 
 <body>
-  <header>
-    <h1 id="logo">Iuly</h1>
-  </header>
-
-  <div class="playlist-container">
-    <input type="text" id="playlist" name="playlist" placeholder="Enter playlist URL">
-    <button onclick="submitPlaylist();">Submit</button>
-  </div>
-
+  <nav class="container-fluid">
+    <ul>
+      <li><strong>Iuly</strong></li>
+    </ul>
+    <ul>
+      <!-- Additional Navigation Links can be added here -->
+    </ul>
+  </nav>
+  <main class="container">
+    <div class="grid">
+      <section>
+        <hgroup>
+          <h2>Insert Your Playlist</h2>
+        </hgroup>
+        <form class="grid" onsubmit="submitPlaylist(); return false;">
+          <input type="text" id="playlist" name="playlistLink" placeholder="Playlist Link" aria-label="Playlist Link"
+            required style="margin-bottom: 1rem;">
+          <button type="submit"
+            style="background-color: black; color: white; padding: 0.5rem 1rem; border-radius: 0.3rem; text-decoration: none;">Convert</button>
+        </form>
+      </section>
+    </div>
+  </main>
+  <footer class="container">
+    <small>&copy; 2024 Iuly</small>
+  </footer>
   <script>
     function submitPlaylist() {
       const playlistUrl = document.getElementById('playlist').value;
@@ -33,16 +53,15 @@
           }
         })
         .then(data => {
-          // Assuming the server sends back a JSON with a status property
           if (data.status === 'success') {
-            window.location.href = '/success'; // Redirect to the success page
+            window.location.href = '/success';
           } else {
-            window.location.href = '/invalid'; // Redirect to the invalid URL page
+            window.location.href = '/invalid';
           }
         })
         .catch((error) => {
           console.error('Error:', error);
-          window.location.href = '/invalid'; // Redirect to the invalid URL page on error
+          window.location.href = '/invalid';
         });
     }
   </script>

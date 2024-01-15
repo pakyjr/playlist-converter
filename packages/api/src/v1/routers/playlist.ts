@@ -17,7 +17,7 @@ export class PlaylistRouter extends BaseRouter {
 
   private configRouter() {
     this.router.use(cors());
-    this.router.route('/send/:fileName').get(this.controller.send.bind(this.controller), this.sendResponse);
+    this.router.route('/send').get(this.controller.send.bind(this.controller), this.sendResponse);
   }
 
   public getRouter() {

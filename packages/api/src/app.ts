@@ -24,7 +24,7 @@ export default function createApp() {
       maxAge: 1000 /*ms*/ * 60 /*s*/ * 60 /*m*/ //* 24 /*h*/
     }
   }));
-  // app.use(express.static(path.join(__dirname, '../../frontend/public'))); //FIXME how awful is this? 
+  app.use(express.static('public')); //FIXME how awful is this? 
   app.use("/v1", mainRouter.getRouter());
   app.use('*', (req, res) => {
     res.status(404).send('Endpoint not found');
