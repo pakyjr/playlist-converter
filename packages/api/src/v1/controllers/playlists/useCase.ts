@@ -3,9 +3,13 @@ import { CoreIndex } from '@iuly/iuly-core'
 
 export class PlaylistUseCase {
 
-  constructor() { }
+  constructor(private core: CoreIndex) { }
 
-  async testGet(): Promise<string> {
-    return ''
+  async sendPlaylistCheckAuth(sessionID: string): Promise<boolean> {
+    //using the sessionID if the user has a token it means he logged in. 
+    //TODO to add check apple music token
+    let token: string | null = await this.core.spotifyCore.getSessionToken(sessionID);
+    if (token) return true
+    return false
   }
 }

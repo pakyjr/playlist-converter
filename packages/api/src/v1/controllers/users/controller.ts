@@ -37,7 +37,7 @@ export class UsersController {
       const code: string | null = req.query.code ? (req.query.code).toString() : null;
       const state: string | null = req.query.state ? (req.query.state).toString() : null;
 
-      const sessionId: string = req.sessionID
+      const sessionId: string = req.sessionID;
       if (!sessionId) throw `USERS CONTROLLER (spotifyAuthCallback): sessionId missing!`
 
       if (code && state) {

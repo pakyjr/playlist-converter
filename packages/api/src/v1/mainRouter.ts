@@ -12,7 +12,7 @@ export class MainRouter {
 
   constructor(core: CoreIndex) {
     //add single routes in the constructor of the main router
-    this.playlistRouter = new PlaylistRouter()
+    this.playlistRouter = new PlaylistRouter(core)
     this.usersRouter = new UsersRouter(core)
     this.router = ExpressPromiseRouter()
     this.configRouter()

@@ -17,14 +17,13 @@ export default function createApp() {
   app.use(session({
     secret: process.env.EXPRESS_SESSION_SECRET ?? '000-000',
     resave: false,
-    saveUninitialized: false,
+    saveUninitialized: true,
     cookie: {
       httpOnly: true,
       secure: false, //TODO understand this better before going to production
       maxAge: 1000 /*ms*/ * 60 /*s*/ * 60 /*m*/ //* 24 /*h*/
     }
   }));
-  app.use(express.static('public')); //FIXME how awful is this? 
   app.use("/v1", mainRouter.getRouter());
   app.use('*', (req, res) => {
     res.status(404).send('Endpoint not found');
