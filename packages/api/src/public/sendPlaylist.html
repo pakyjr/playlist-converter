@@ -36,33 +36,26 @@
     <small>&copy; 2024 Iuly</small>
   </footer>
   <script>
-    function submitPlaylist() {
+    async function submitPlaylist() {
       const playlistUrl = document.getElementById('playlist').value;
-      fetch('http://localhost:8080/v1/playlist/sent', {
+      const response = await fetch('http://localhost:8080/v1/playlist/sent', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
         },
         body: JSON.stringify({ url: playlistUrl })
-      })
-        .then(response => {
-          if (response.ok) {
-            return response.json();
-          } else {
-            throw new Error('Invalid URL');
-          }
-        })
-        .then(data => {
-          if (data.status === 'success') {
-            window.location.href = '/success';
-          } else {
-            window.location.href = '/invalid';
-          }
-        })
-        .catch((error) => {
-          console.error('Error:', error);
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        if (data.status === 'success') {
+          window.location.href = '/success';
+        } else {
           window.location.href = '/invalid';
-        });
+        }
+      } else {
+        alert('Invalid Playlist');
+      }
     }
   </script>
 </body>

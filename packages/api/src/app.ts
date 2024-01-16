@@ -5,6 +5,7 @@ import session from 'express-session'
 import path from 'path'
 import { MainRouter } from './v1/mainRouter'
 import { CoreIndex, CoreSingleton } from "@iuly/iuly-core";
+import bodyParser from 'body-parser'
 
 export default function createApp() {
   const coreIndex: CoreIndex = CoreSingleton.getCore()
@@ -14,6 +15,7 @@ export default function createApp() {
 
   app.use(cors());
   app.use(compression());
+  app.use(bodyParser.json());
   app.use(session({
     secret: process.env.EXPRESS_SESSION_SECRET ?? '000-000',
     resave: false,
