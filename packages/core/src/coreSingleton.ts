@@ -7,7 +7,7 @@ export class CoreSingleton {
 
   static getCore() {
     if (!this.coreIndex) {
-      const allDal: AllDal = allDalImplementations
+      const allDal: AllDal = allDalImplementations;
       this.coreIndex = new CoreIndex(allDal);
     }
     return this.coreIndex

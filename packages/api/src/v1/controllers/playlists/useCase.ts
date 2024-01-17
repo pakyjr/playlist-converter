@@ -12,4 +12,11 @@ export class PlaylistUseCase {
     if (token) return true
     return false
   }
+
+  async workSpotify(sessionID: string, playlistUrl: string) {
+    let token: string | null = await this.core.spotifyCore.getSessionToken(sessionID);
+    if (token) {
+      //calls core service
+    }
+  }
 }

@@ -2,7 +2,7 @@ import { PlaylistUseCase } from './useCase'
 import { NextFunction, Request, Response } from 'express';
 import { ResponseHandler } from '../../../responseHandler';
 import { CoreIndex } from '@iuly/iuly-core'
-import { checkValidPlaylistURL } from '../../../utils'
+import { checkValidPlaylistURL, addQueryStringToURL } from '../../../utils'
 import { MusicProvider, ValidPlaylistUrl } from '@iuly/iuly-models'
 import path from 'path'
 import fs from 'fs'
@@ -41,16 +41,15 @@ export class PlaylistController {
     /*we will receive a playlist URL, first of all retrieve the sessionID and the url
     check the url validity, retrieve user token, figure out if the url is spotify or apple music.*/
     try {
-      const sessionID: string = req.sessionID;
-      const token = await this.core.spotifyCore.getSessionToken(sessionID);
-
-      const playlistUrl: string = req.body.url; //FIXME not receiving playlist url. 
-
+      const playlistUrl: string = req.body.url;
       let validUrlInfo: ValidPlaylistUrl = checkValidPlaylistURL(playlistUrl);
+
       if (validUrlInfo.valid) {
         if (validUrlInfo.provider === MusicProvider.Spotify) {
           /*trigger Spotify converter logic*/
-          res.send('spotify')
+          res.redirect(addQueryStringToURL(`${process.env.BASE_URL}/v1/playlist/spotify`, {
+            url: playlistUrl
+          })); //XXX check html script
         } else if (validUrlInfo.provider === MusicProvider.AppleMusic) {
           /*trigger apple music converter logic*/
           res.send('apple music')
@@ -62,5 +61,14 @@ export class PlaylistController {
       ResponseHandler.badRequest(res, JSON.stringify(err));
     }
     return next()
+  }
+
+  async workSpotify(req: Request, res: Response, next: NextFunction) {
+    //send sessionId to usecase.
+    const sessionID: string = req.sessionID;
+    //the playlist url is a mandatory queryParam.
+    const playlistUrl: string | undefined = req.query.url ? (req.query.url).toString() : undefined;
+    //calls use case.
+
   }
 }
