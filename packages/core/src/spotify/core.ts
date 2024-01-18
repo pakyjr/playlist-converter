@@ -1,6 +1,7 @@
 import { SpotifyDAL } from '@iuly/iuly-dal'
 import { SpotifyDALInterface } from '@iuly/iuly-interfaces'
-import { SpotifyToken } from '@iuly/iuly-models'
+import { SpotifyToken, SpotifyAlbum, SpotifyArtist, SpotifyPlaylist, SpotifyTrack } from '@iuly/iuly-models'
+import { SpotifyConverter } from './converter'
 
 export class SpotifyCore {
 
@@ -16,17 +17,61 @@ export class SpotifyCore {
     return null
   }
 
-  async getSpotifyPlaylist(sessionID: string, playlistUrl: string) {
+  async getSpotifyPlaylist(sessionID: string, playlistUrl: string): Promise<SpotifyPlaylist | null> {
     const token: string | null = await this.spotifyDal.getToken(sessionID);
     if (token) {
-      let playlist = await this.spotifyDal.getPlaylist(token, playlistUrl);
-      if (playlist) {
-        //work playlist
-        //maybe parse the data we need, or we do that by query filtering on the get request?
+      const playlistID: string = this.getIdFromPlaylistUrl(playlistUrl);
+      let rawPlaylist = await this.spotifyDal.getPlaylist(token, playlistID);
+      if (rawPlaylist !== null) {
+        let rawTrackItems = rawPlaylist.tracks.items
+        let spotifyPlaylist: SpotifyPlaylist = this.handleSpotifyPlaylist(rawPlaylist, rawTrackItems);
+        return spotifyPlaylist
       } else {
-        //playlist is not valid login, return like undefined, if usecase receive undefined, controller should
-        //say playlist is not valid
+        return null
       }
+    } else {
+      return null
     }
+  }
+
+  // UTILS
+  private handleSpotifyPlaylist(rawPlaylist: any, rawTrackItems: any): SpotifyPlaylist {
+    let spotifyTracks: SpotifyTrack[] = [];
+    for (let rawTrackItem of rawTrackItems) {
+      let rawTrack = rawTrackItem.track;
+      let rawAlbum = rawTrack.album;
+
+      let spotifyTrack: SpotifyTrack = this.handleSpotifyTrack(rawTrack, rawAlbum);
+
+      spotifyTracks.push(spotifyTrack);
+    }
+    let spotifyPlaylist: SpotifyPlaylist = SpotifyConverter.rawPlaylistIntoSpotifyPlaylist(rawPlaylist, spotifyTracks);
+    return spotifyPlaylist
+  }
+
+  private handleSpotifyTrack(rawTrack: any, rawAlbum: any): SpotifyTrack {
+    let rawAlbumArtists = rawAlbum.artists;
+    let rawTrackArtists = rawTrack.artists;
+    let spotifyArtistsForAlbum: SpotifyArtist[] = [];
+    let spotifyArtistsForTrack: SpotifyArtist[] = [];
+
+    for (let artist of rawTrackArtists) {
+      spotifyArtistsForTrack.push(SpotifyConverter.rawArtistIntoSpotifyArtist(artist));
+    }
+
+    for (let artist of rawAlbumArtists) {
+      spotifyArtistsForAlbum.push(SpotifyConverter.rawArtistIntoSpotifyArtist(artist));
+    }
+
+    let spotifyAlbum: SpotifyAlbum = SpotifyConverter.rawAlbumIntoSpotifyAlbum(rawAlbum, spotifyArtistsForAlbum);
+    let spotifyTrack: SpotifyTrack = SpotifyConverter.rawTrackIntoSpotifyTrack(rawTrack, spotifyAlbum, spotifyArtistsForTrack);
+
+    return spotifyTrack
+  }
+
+  private getIdFromPlaylistUrl(playlistUrl: string): string {
+    let parts = playlistUrl.split('/');
+    return parts[parts.length - 1];
+
   }
 }

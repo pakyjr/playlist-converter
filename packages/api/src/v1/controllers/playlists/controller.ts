@@ -68,7 +68,15 @@ export class PlaylistController {
     const sessionID: string = req.sessionID;
     //the playlist url is a mandatory queryParam.
     const playlistUrl: string | undefined = req.query.url ? (req.query.url).toString() : undefined;
-    //calls use case.
-
+    if (playlistUrl) {
+      let spotifyPlaylist = await this.useCase.workSpotify(sessionID, playlistUrl)
+      if (spotifyPlaylist) {
+        res.send(spotifyPlaylist)
+      } else {
+        ResponseHandler.badRequest(res)
+      }
+    }
+    else ResponseHandler.badRequest(res)
+    return next()
   }
 }

@@ -23,31 +23,29 @@ export class SpotifyDAL implements SpotifyDALInterface {
     return null
   }
 
-  async getPlaylist(token: string, playlistUrl: string): Promise<any> {
+  async getPlaylist(token: string, playlistID: string): Promise<any | null> {
     const header = this.authHeaderUsingToken(token);
-    const playlistID: string = this.getIdFromPlaylistUrl(playlistUrl);
     const getPlaylistEndpoint: string = `https://api.spotify.com/v1/playlists/${playlistID}`;
-    const playlist = await this.networkHandler.get(getPlaylistEndpoint, {
-      headers: {
-        ...header
-      }
-    });
-    return playlist
+    try {
+      const response = await this.networkHandler.get(getPlaylistEndpoint, {
+        headers: {
+          ...header
+        }
+      });
+      return response.data
+    } catch (error) {
+      return null
+    }
   }
 
   private buildSpotifyTokenKey(sessionId: string): string {
     return `spotifyToken:${sessionId}`
   }
 
-  private authHeaderUsingToken(token: string): { Authorization: string } {
+  private authHeaderUsingToken(token: string): { Authorization: string, Accept: string } {
     return {
-      Authorization: `Bearer ${token}`
+      Authorization: `Bearer ${token}`,
+      Accept: 'application/json'
     }
-  }
-
-  private getIdFromPlaylistUrl(playlistUrl: string): string {
-    let parts = playlistUrl.split('/');
-    return parts[parts.length - 1];
-
   }
 }

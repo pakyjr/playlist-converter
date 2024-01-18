@@ -20,7 +20,7 @@ export class PlaylistRouter extends BaseRouter {
     this.router.use(cors());
     this.router.route('/send').get(this.controller.sendPlaylist.bind(this.controller), this.sendResponse);
     this.router.route('/sent').post(this.controller.checkPlaylistURL.bind(this.controller), this.sendResponse);
-    this.router.route('/spotify').post(this.controller.workSpotify.bind(this.controller), this.sendResponse);
+    this.router.route('/spotify').get(this.controller.workSpotify.bind(this.controller), this.sendResponse);
   }
 
   public getRouter() {

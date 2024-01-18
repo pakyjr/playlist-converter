@@ -1,4 +1,4 @@
-import { SpotifyToken } from '@iuly/iuly-models'
+import { SpotifyPlaylist, SpotifyToken } from '@iuly/iuly-models'
 import { CoreIndex } from '@iuly/iuly-core'
 
 export class PlaylistUseCase {
@@ -13,10 +13,9 @@ export class PlaylistUseCase {
     return false
   }
 
-  async workSpotify(sessionID: string, playlistUrl: string) {
-    let token: string | null = await this.core.spotifyCore.getSessionToken(sessionID);
-    if (token) {
-      //calls core service
-    }
+  async workSpotify(sessionID: string, playlistUrl: string): Promise<SpotifyPlaylist | null> {
+    let playlist = await this.core.spotifyCore.getSpotifyPlaylist(sessionID, playlistUrl);
+    if (playlist) return playlist
+    return null
   }
 }
