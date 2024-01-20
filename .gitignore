@@ -70,3 +70,5 @@ packages/tools/src/generatedEventRules
 
 comparePlanResult
 synkLog
+*.tsbuildinfo
+*.rdb

@@ -1,0 +1,22 @@
+{
+  "name": "@iuly/iuly-interfaces",
+  "version": "0.0.0",
+  "description": "Interfaces",
+  "main": "lib/index.js",
+  "directories": {
+    "lib": "lib"
+  },
+  "files": [
+    "lib"
+  ],
+  "scripts": {
+    "tsc": "tsc"
+  },
+  "keywords": [],
+  "author": "Pasquale Junior Montò",
+  "license": "ISC",
+  "devDependencies": {
+    "@iuly/iuly-models": "1.0.0"
+  },
+  "dependencies": {}
+}

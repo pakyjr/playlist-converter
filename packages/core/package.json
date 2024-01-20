@@ -1,0 +1,25 @@
+{
+  "name": "@iuly/iuly-core",
+  "version": "1.0.0",
+  "description": "Core Service for Iuly playlist-converter",
+  "main": "lib/index.js",
+  "directories": {
+    "lib": "lib"
+  },
+  "files": [
+    "lib"
+  ],
+  "scripts": {
+    "tsc": "tsc"
+  },
+  "devDependencies": {
+    "@iuly/iuly-dal": "0.0.0",
+    "@iuly/iuly-interfaces": "0.0.0",
+    "@iuly/iuly-utils": "0.0.0",
+    "@iuly/iuly-models": "1.0.0"
+  },
+  "dependencies": {},
+  "keywords": [],
+  "author": "Pasquale Junior Montò",
+  "license": "ISC"
+}

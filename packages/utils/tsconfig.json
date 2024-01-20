@@ -1,10 +1,25 @@
 {
   "extends": "../../tsconfig.json",
   "compilerOptions": {
-    "outDir": "./lib"
+    "outDir": "./lib",
+    "rootDir": "./src",
+    "composite": true
   },
-  "include": [
-    "./src",
-    "./test.ts"
+  "references": [
+    {
+      "path": "../models"
+    },
+    {
+      "path": "../interfaces"
+    },
+    {
+      "path": "../data"
+    }
   ],
+  "include": [
+    "src/**/*",
+  ],
+  "exclude": [
+    "./lib/**/*"
+  ]
 }

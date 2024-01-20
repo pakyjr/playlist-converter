@@ -5,7 +5,17 @@
     "rootDir": "./src",
     "composite": true
   },
-  "references": [],
+  "references": [
+    {
+      "path": "../models"
+    },
+    {
+      "path": "../interfaces"
+    },
+    {
+      "path": "../utils"
+    }
+  ],
   "include": [
     "src/**/*"
   ],

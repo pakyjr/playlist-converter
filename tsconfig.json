@@ -8,7 +8,7 @@
       "es2017"
     ],
     // "lib": [],                             /* Specify library files to be included in the compilation. */
-    // "allowJs": true,                       /* Allow javascript files to be compiled. */
+    // "allowJs": false, /* Allow javascript files to be compiled. */
     // "checkJs": true,                       /* Report errors in .js files. */
     // "jsx": "preserve",                     /* Specify JSX code generation: 'preserve', 'react-native', or 'react'. */
     "declaration": true, /* Generates corresponding '.d.ts' file. */
@@ -63,6 +63,18 @@
       ],
       "@iuly/iuly-models": [
         "./packages/models/src"
+      ],
+      "@iuly/iuly-api": [
+        "./packages/api/src"
+      ],
+      "@iuly/iuly-core": [
+        "./packages/core/src"
+      ],
+      "@iuly/iuly-dal": [
+        "./packages/data/src"
+      ],
+      "@iuly/iuly-interfaces": [
+        "./packages/interfaces/src"
       ]
     } /* A series of entries which re-map imports to lookup locations relative to the 'baseUrl'. */
   },
@@ -72,5 +84,25 @@
   "exclude": [
     "node_modules",
     "**/*.spec.ts"
+  ],
+  "references": [
+    {
+      "path": "./packages/api"
+    },
+    {
+      "path": "./packages/core"
+    },
+    {
+      "path": "./packages/data"
+    },
+    {
+      "path": "./packages/interfaces"
+    },
+    {
+      "path": "./packages/models"
+    },
+    {
+      "path": "./packages/utils"
+    }
   ]
 }
