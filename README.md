@@ -15,7 +15,8 @@ A duplex playlist converter built with TypeScript. Seamlessly transfer playlists
 	•	Spotify Web API
 
 🚀 Getting Started
-	1.	Clone the repo:
+
+1.	Clone the repo:
  ```
 git clone https://github.com/yourusername/playlist-converter.git 
 cd playlist-converter
