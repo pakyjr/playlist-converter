@@ -1,4 +1,4 @@
-🎵 Playlist Converter (Apple Music ↔ Spotify)
+# 🎵 Playlist Converter (Apple Music ↔ Spotify)
 
 A duplex playlist converter built with TypeScript. Seamlessly transfer playlists between Apple Music and Spotify.
 
