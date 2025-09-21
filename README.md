@@ -1,20 +1,18 @@
-# 🎵 Playlist Converter (Apple Music ↔ Spotify)
+# Playlist Converter (Apple Music ↔ Spotify)
 
 A duplex playlist converter built with TypeScript. Seamlessly transfer playlists between Apple Music and Spotify.
 
-✨ Features
-	•	🔁 Convert playlists both ways: Apple Music ↔ Spotify
-	•	🔍 Match tracks across platforms by metadata
-	•	⚡ Fast, lightweight, and developer-friendly
-	•	🔐 Secure auth with OAuth 2.0
+ Features
+	•	Convert playlists both ways: Apple Music ↔ Spotify
+	•	Match tracks across platforms by metadata
 
-🛠 Tech Stack
+Tech Stack
 	•	TypeScript
 	•	Node.js
 	•	Apple Music API
 	•	Spotify Web API
 
-🚀 Getting Started
+Getting Started
 
 1.	Clone the repo:
  ```
@@ -27,7 +25,7 @@ npm install
 ```
 3.	Create a .env file and add your API credentials:
 
-🔑 Spotify API Keys
+Spotify API Keys
 
 •	Go to the Spotify Developer Dashboard.
 
@@ -37,7 +35,7 @@ npm install
 
 •	Set a redirect URI (e.g., http://localhost:3000/callback) and add it to your app settings.
 
-🍎 Apple Music API Token
+Apple Music API Token
 
 •	Log into your Apple Developer account.
 
