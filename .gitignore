@@ -72,3 +72,5 @@ comparePlanResult
 synkLog
 *.tsbuildinfo
 *.rdb
+
+Package.resolved

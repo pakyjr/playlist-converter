@@ -55,4 +55,5 @@ export class UsersController {
     }
     return next();
   }
+
 }
