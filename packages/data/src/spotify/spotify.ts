@@ -1,4 +1,4 @@
-import { redisClient, NetworkHandler } from '@iuly/iuly-utils'
+import { getRedisClient, NetworkHandler } from '@iuly/iuly-utils'
 import { SpotifyDALInterface, ProviderDAL } from '@iuly/iuly-interfaces'
 import { SpotifyToken, AuthToken } from '@iuly/iuly-models'
 
@@ -18,18 +18,29 @@ export class SpotifyDAL implements SpotifyDALInterface, ProviderDAL {
 
   // Legacy method - kept for backwards compatibility
   async addSessionToken(token: SpotifyToken | AuthToken, sessionId: string): Promise<void> {
+    const client = await getRedisClient();
+    if (!client) {
+      console.log('[SpotifyDAL] Redis not available, token not persisted');
+      return;
+    }
+
     const redisKey = this.buildSpotifyTokenKey(sessionId);
     const accessToken = 'access_token' in token ? token.access_token : token.accessToken;
     const expiresIn = 'expires_in' in token ? token.expires_in : token.expiresIn;
 
-    await redisClient.set(redisKey, accessToken, {
+    await client.set(redisKey, accessToken, {
       EX: expiresIn
     });
   }
 
   async getToken(sessionId: string): Promise<string | null> {
+    const client = await getRedisClient();
+    if (!client) {
+      return null;
+    }
+
     const redisKey = this.buildSpotifyTokenKey(sessionId);
-    const token: string | null = await redisClient.get(redisKey);
+    const token: string | null = await client.get(redisKey);
     if (token !== null) return token
     return null
   }

@@ -18,6 +18,12 @@ export class PlaylistRouter extends BaseRouter {
 
   private configRouter() {
     this.router.use(cors());
+
+    // New endpoints for design patterns demo
+    this.router.route('/convert').post(this.controller.convertPlaylist.bind(this.controller), this.sendResponse);
+    this.router.route('/providers').get(this.controller.getProviders.bind(this.controller), this.sendResponse);
+
+    // Legacy endpoints
     this.router.route('/send').get(this.controller.sendPlaylist.bind(this.controller), this.sendResponse);
     this.router.route('/sent').post(this.controller.checkPlaylistURL.bind(this.controller), this.sendResponse);
     this.router.route('/spotify').get(this.controller.workSpotify.bind(this.controller), this.sendResponse);

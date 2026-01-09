@@ -74,3 +74,4 @@ synkLog
 *.rdb
 
 Package.resolved
+config/keys/

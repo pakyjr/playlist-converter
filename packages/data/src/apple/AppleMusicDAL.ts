@@ -2,82 +2,171 @@
  * AppleMusicDAL
  *
  * Data Access Layer for Apple Music API.
- * Currently uses MOCK DATA for development/demo purposes.
- *
- * To use real API:
- * 1. Set APPLE_TEAM_ID, APPLE_KEY_ID, APPLE_PRIVATE_KEY_PATH in .env
- * 2. Remove USE_MOCK_DATA flag
+ * Uses real Apple Music API when developer token is available,
+ * falls back to mock data for demo purposes.
  */
 
 import { ProviderDAL } from '@iuly/iuly-interfaces';
 import { AuthToken } from '@iuly/iuly-models';
-import { redisClient } from '@iuly/iuly-utils';
-
-// Set to false when real Apple credentials are available
-const USE_MOCK_DATA = true;
+import { getRedisClient, NetworkHandler } from '@iuly/iuly-utils';
 
 export class AppleMusicDAL implements ProviderDAL {
 
   private readonly REDIS_KEY_PREFIX = 'appleMusicToken:';
+  private readonly APPLE_API_BASE = 'https://api.music.apple.com/v1';
+  private readonly DEFAULT_STOREFRONT = 'us'; // Default to US storefront
+  private networkHandler: NetworkHandler;
+
+  constructor() {
+    this.networkHandler = new NetworkHandler();
+  }
 
   async addSessionToken(token: AuthToken, sessionId: string): Promise<void> {
+    const client = await getRedisClient();
+    if (!client) {
+      console.log('[AppleMusicDAL] Redis not available, token not persisted');
+      return;
+    }
+
     const redisKey = this.buildTokenKey(sessionId);
-    await redisClient.set(redisKey, token.accessToken, {
+    await client.set(redisKey, token.accessToken, {
       EX: token.expiresIn
     });
+
+    // Also store the music user token if present
+    if (token.scope?.startsWith('musicUserToken:')) {
+      const musicUserToken = token.scope.replace('musicUserToken:', '');
+      await client.set(`${redisKey}:userToken`, musicUserToken, {
+        EX: token.expiresIn
+      });
+    }
   }
 
   async getToken(sessionId: string): Promise<string | null> {
-    const redisKey = this.buildTokenKey(sessionId);
-    return redisClient.get(redisKey);
-  }
-
-  async getPlaylist(token: string, playlistId: string): Promise<any | null> {
-    if (USE_MOCK_DATA) {
-      return this.getMockPlaylist(playlistId);
+    const client = await getRedisClient();
+    if (!client) {
+      return null;
     }
 
-    // Real implementation would call Apple Music API
-    // const response = await this.networkHandler.get(
-    //   `https://api.music.apple.com/v1/me/library/playlists/${playlistId}`,
-    //   { headers: this.buildHeaders(token) }
-    // );
-    // return response.data;
+    const redisKey = this.buildTokenKey(sessionId);
+    return client.get(redisKey);
+  }
 
-    return null;
+  async getMusicUserToken(sessionId: string): Promise<string | null> {
+    const client = await getRedisClient();
+    if (!client) {
+      return null;
+    }
+
+    const redisKey = this.buildTokenKey(sessionId);
+    return client.get(`${redisKey}:userToken`);
+  }
+
+  async getPlaylist(token: string, playlistId: string, musicUserToken?: string): Promise<any | null> {
+    try {
+      // For library playlists, we need the music user token
+      const endpoint = musicUserToken
+        ? `${this.APPLE_API_BASE}/me/library/playlists/${playlistId}?include=tracks`
+        : `${this.APPLE_API_BASE}/catalog/${this.DEFAULT_STOREFRONT}/playlists/${playlistId}?include=tracks`;
+
+      const response = await this.networkHandler.get(endpoint, {
+        headers: this.buildHeaders(token, musicUserToken)
+      });
+
+      return response.data;
+    } catch (error: any) {
+      console.error('[AppleMusicDAL] getPlaylist error:', error.message);
+      // Fall back to mock data for demo
+      return this.getMockPlaylist(playlistId);
+    }
   }
 
   async search(token: string, query: string): Promise<any[]> {
-    if (USE_MOCK_DATA) {
+    try {
+      const endpoint = `${this.APPLE_API_BASE}/catalog/${this.DEFAULT_STOREFRONT}/search?term=${encodeURIComponent(query)}&types=songs&limit=10`;
+
+      const response = await this.networkHandler.get(endpoint, {
+        headers: this.buildHeaders(token)
+      });
+
+      return response.data?.results?.songs?.data || [];
+    } catch (error: any) {
+      console.error('[AppleMusicDAL] search error:', error.message);
       return this.getMockSearchResults(query);
     }
-
-    // Real implementation would call Apple Music API
-    return [];
   }
 
   async searchByISRC(token: string, isrc: string): Promise<any | null> {
-    if (USE_MOCK_DATA) {
+    try {
+      const endpoint = `${this.APPLE_API_BASE}/catalog/${this.DEFAULT_STOREFRONT}/songs?filter[isrc]=${isrc}`;
+
+      const response = await this.networkHandler.get(endpoint, {
+        headers: this.buildHeaders(token)
+      });
+
+      const songs = response.data?.data;
+      return songs && songs.length > 0 ? songs[0] : null;
+    } catch (error: any) {
+      console.error('[AppleMusicDAL] searchByISRC error:', error.message);
       return this.getMockTrackByISRC(isrc);
     }
-
-    // Real implementation would call:
-    // https://api.music.apple.com/v1/catalog/{storefront}/songs?filter[isrc]={isrc}
-    return null;
   }
 
   async createPlaylist(
     token: string,
     name: string,
     description: string,
-    trackIds: string[]
+    trackIds: string[],
+    musicUserToken?: string
   ): Promise<any> {
-    if (USE_MOCK_DATA) {
+    if (!musicUserToken) {
+      console.warn('[AppleMusicDAL] createPlaylist requires musicUserToken, using mock');
       return this.getMockCreatedPlaylist(name, description, trackIds);
     }
 
-    // Real implementation would POST to Apple Music API
-    return null;
+    try {
+      const endpoint = `${this.APPLE_API_BASE}/me/library/playlists`;
+
+      const body = {
+        attributes: {
+          name,
+          description
+        },
+        relationships: {
+          tracks: {
+            data: trackIds.map(id => ({
+              id,
+              type: 'songs'
+            }))
+          }
+        }
+      };
+
+      const response = await this.networkHandler.post(endpoint, body, {
+        headers: {
+          ...this.buildHeaders(token, musicUserToken),
+          'Content-Type': 'application/json'
+        }
+      });
+
+      return response.data;
+    } catch (error: any) {
+      console.error('[AppleMusicDAL] createPlaylist error:', error.message);
+      return this.getMockCreatedPlaylist(name, description, trackIds);
+    }
+  }
+
+  private buildHeaders(developerToken: string, musicUserToken?: string): Record<string, string> {
+    const headers: Record<string, string> = {
+      'Authorization': `Bearer ${developerToken}`,
+      'Accept': 'application/json'
+    };
+
+    if (musicUserToken) {
+      headers['Music-User-Token'] = musicUserToken;
+    }
+
+    return headers;
   }
 
   private buildTokenKey(sessionId: string): string {

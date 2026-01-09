@@ -10,7 +10,9 @@
     "lib"
   ],
   "scripts": {
-    "tsc": "tsc"
+    "tsc": "tsc",
+    "start": "node lib/index.js",
+    "dev": "ts-node-dev --respawn src/index.ts"
   },
   "author": "Pasquale Jr Montò",
   "license": "ISC",
