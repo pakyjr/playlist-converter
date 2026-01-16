@@ -72,6 +72,11 @@ export interface ConversionResult {
   unmatchedTracks: UnifiedTrack[];
   matchRate: number;  // 0.0 to 1.0
   targetProvider: MusicProvider;
+  createdPlaylist?: {
+    id: string;
+    name: string;
+    url?: string;
+  };
 }
 
 /**

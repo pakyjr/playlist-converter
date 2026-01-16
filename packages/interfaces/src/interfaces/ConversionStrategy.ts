@@ -22,12 +22,18 @@ export interface ConversionStrategy {
    * @param source - The unified playlist to convert
    * @param targetDAL - DAL for the target provider (to search for matching tracks)
    * @param targetToken - Authentication token for the target provider
+   * @param musicUserToken - Optional user token (required for Apple Music playlist creation)
+   * @param delayMs - Delay between API requests (for rate limiting)
+   * @param onProgress - Optional progress callback (current track index, total tracks)
    * @returns Conversion result with matched and unmatched tracks
    */
   convert(
     source: UnifiedPlaylist,
     targetDAL: ProviderDAL,
-    targetToken: string
+    targetToken: string,
+    musicUserToken?: string,
+    delayMs?: number,
+    onProgress?: (current: number, total: number) => void
   ): Promise<ConversionResult>;
 
   /**

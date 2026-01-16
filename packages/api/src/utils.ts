@@ -13,17 +13,6 @@ export function addQueryStringToURL(url: string | undefined, params: Record<stri
   return `?${queryParams.toString()}`
 }
 
-export function generateRandomString(length: number): string {
-  const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-  let result = '';
-
-  for (let char of characters) {
-    result += characters.charAt(Math.floor(Math.random() * characters.length));
-  }
-
-  return result;
-}
-
 export function checkValidPlaylistURL(url: string): ValidPlaylistUrl {
   //spotifyExample: https://open.spotify.com/playlist/1nIGJ4iqlhFkn6KL0sVmQd *regex valid / non existent playlist*
   //appleMusicExample: https://music.apple.com/library/playlist/a.EYWrg10un7zAZJR *regex valid / non existent playlist*

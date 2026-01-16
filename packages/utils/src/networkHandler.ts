@@ -1,12 +1,15 @@
 import axios, { AxiosInstance, AxiosRequestConfig, AxiosResponse } from 'axios'
 import { HTTPMethods } from '@iuly/iuly-models'
+import { withRetry, DEFAULT_RETRY_CONFIG, RetryConfig } from './rateLimiting'
 
 export class NetworkHandler {
 
   private axiosInstance: AxiosInstance;
+  private retryConfig: RetryConfig;
 
-  constructor() {
+  constructor(retryConfig: RetryConfig = DEFAULT_RETRY_CONFIG) {
     this.axiosInstance = axios.create();
+    this.retryConfig = retryConfig;
   }
 
   async get(url: string, config?: AxiosRequestConfig) {
@@ -26,16 +29,21 @@ export class NetworkHandler {
   }
 
   private async request(method: HTTPMethods, url: string, body?: any, config?: AxiosRequestConfig): Promise<AxiosResponse> {
-    try {
-      return await this.axiosInstance.request({
-        method,
-        url,
-        data: body,
-        ...config,
-      });
-    } catch (error) {
-      console.error(`NETWORK HANDLER: ${method} request to ${url} failed!\n ERROR LOG:`, error);
-      throw error;
-    }
+    return withRetry(async () => {
+      try {
+        return await this.axiosInstance.request({
+          method,
+          url,
+          data: body,
+          ...config,
+        });
+      } catch (error: any) {
+        // Log non-rate-limit errors
+        if (error.response?.status !== 429 && error.response?.status !== 403) {
+          console.error(`NETWORK HANDLER: ${method} request to ${url} failed!\n ERROR LOG:`, error.message);
+        }
+        throw error;
+      }
+    }, this.retryConfig);
   }
 }

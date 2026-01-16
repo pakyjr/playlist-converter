@@ -44,7 +44,7 @@ async function getRedisClient(): Promise<RedisClientType | null> {
     await client.connect();
     return client;
   } catch (err: any) {
-    console.log('[Redis] Not available - running in demo mode (no session persistence)');
+    console.log('[Redis] Not available - sessions will not persist across restarts');
     client = null;
     return null;
   }

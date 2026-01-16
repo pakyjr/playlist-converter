@@ -1,8 +1,8 @@
 /**
  * Auth Module
  *
- * Authentication handlers for different music providers.
- * Part of the ABSTRACT FACTORY PATTERN - products created by factories.
+ * Authentication handlers for music providers.
+ * Located in the API layer since they handle HTTP/network responses.
  */
 
 export { SpotifyAuthHandler } from './SpotifyAuthHandler';

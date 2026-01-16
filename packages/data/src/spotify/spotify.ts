@@ -1,6 +1,8 @@
-import { getRedisClient, NetworkHandler } from '@iuly/iuly-utils'
+import { getRedisClient, NetworkHandler, createLogger } from '@iuly/iuly-utils'
 import { SpotifyDALInterface, ProviderDAL } from '@iuly/iuly-interfaces'
 import { SpotifyToken, AuthToken } from '@iuly/iuly-models'
+
+const log = createLogger('SpotifyDAL');
 
 /**
  * SpotifyDAL
@@ -20,7 +22,7 @@ export class SpotifyDAL implements SpotifyDALInterface, ProviderDAL {
   async addSessionToken(token: SpotifyToken | AuthToken, sessionId: string): Promise<void> {
     const client = await getRedisClient();
     if (!client) {
-      console.log('[SpotifyDAL] Redis not available, token not persisted');
+      log.warn('Redis not available, token not persisted');
       return;
     }
 
@@ -50,9 +52,28 @@ export class SpotifyDAL implements SpotifyDALInterface, ProviderDAL {
     const endpoint = `${this.SPOTIFY_API_BASE}/playlists/${playlistId}`;
     try {
       const response = await this.networkHandler.get(endpoint, { headers });
-      return response.data
-    } catch (error) {
-      return null
+      const playlist = response.data;
+
+      // Handle pagination - Spotify returns max 100 tracks per request
+      if (playlist.tracks?.next) {
+        const allTracks = [...playlist.tracks.items];
+        let nextUrl = playlist.tracks.next;
+
+        while (nextUrl) {
+          log.info(`Fetching more tracks... (${allTracks.length}/${playlist.tracks.total})`);
+          const nextResponse = await this.networkHandler.get(nextUrl, { headers });
+          allTracks.push(...nextResponse.data.items);
+          nextUrl = nextResponse.data.next;
+        }
+
+        playlist.tracks.items = allTracks;
+        log.info(`Fetched all ${allTracks.length} tracks`);
+      }
+
+      return playlist;
+    } catch (error: any) {
+      log.error(`Failed to fetch playlist ${playlistId}: ${error.message}`);
+      throw new Error(`Failed to fetch Spotify playlist: ${error.message}`);
     }
   }
 
@@ -66,7 +87,8 @@ export class SpotifyDAL implements SpotifyDALInterface, ProviderDAL {
     try {
       const response = await this.networkHandler.get(endpoint, { headers });
       return response.data?.tracks?.items || [];
-    } catch (error) {
+    } catch (error: any) {
+      log.warn(`Search failed for "${query}": ${error.message}`);
       return [];
     }
   }
@@ -82,7 +104,8 @@ export class SpotifyDAL implements SpotifyDALInterface, ProviderDAL {
       const response = await this.networkHandler.get(endpoint, { headers });
       const tracks = response.data?.tracks?.items;
       return tracks && tracks.length > 0 ? tracks[0] : null;
-    } catch (error) {
+    } catch (error: any) {
+      log.warn(`ISRC search failed for ${isrc}: ${error.message}`);
       return null;
     }
   }
@@ -90,12 +113,14 @@ export class SpotifyDAL implements SpotifyDALInterface, ProviderDAL {
   /**
    * Create a new playlist on Spotify
    * Part of ProviderDAL interface
+   * @param musicUserToken - Not used for Spotify, included for interface compliance
    */
   async createPlaylist(
     token: string,
     name: string,
     description: string,
-    trackIds: string[]
+    trackIds: string[],
+    musicUserToken?: string
   ): Promise<any> {
     const headers = this.authHeaderUsingToken(token);
 

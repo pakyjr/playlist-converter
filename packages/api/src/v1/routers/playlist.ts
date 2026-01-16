@@ -4,11 +4,12 @@ import ExpressPromiseRouter from "express-promise-router";
 import cors from 'cors'
 import { PlaylistController } from '../controllers/playlists/controller'
 import { BaseRouter } from '../../base';
+import { validateConversionRequest } from '../../middleware/validators';
 
 export class PlaylistRouter extends BaseRouter {
   private router: Router;
   private controller: PlaylistController;
-  //add controller,
+
   constructor(private core: CoreIndex) {
     super()
     this.controller = new PlaylistController(core);
@@ -18,15 +19,17 @@ export class PlaylistRouter extends BaseRouter {
 
   private configRouter() {
     this.router.use(cors());
-
-    // New endpoints for design patterns demo
-    this.router.route('/convert').post(this.controller.convertPlaylist.bind(this.controller), this.sendResponse);
+    this.router.route('/convert').post(
+      validateConversionRequest,
+      this.controller.convertPlaylist.bind(this.controller),
+      this.sendResponse
+    );
+    this.router.route('/convert/stream').post(
+      validateConversionRequest,
+      this.controller.convertPlaylistWithProgress.bind(this.controller)
+    );
     this.router.route('/providers').get(this.controller.getProviders.bind(this.controller), this.sendResponse);
-
-    // Legacy endpoints
-    this.router.route('/send').get(this.controller.sendPlaylist.bind(this.controller), this.sendResponse);
-    this.router.route('/sent').post(this.controller.checkPlaylistURL.bind(this.controller), this.sendResponse);
-    this.router.route('/spotify').get(this.controller.workSpotify.bind(this.controller), this.sendResponse);
+    this.router.route('/limits').get(this.controller.getLimits.bind(this.controller), this.sendResponse);
   }
 
   public getRouter() {

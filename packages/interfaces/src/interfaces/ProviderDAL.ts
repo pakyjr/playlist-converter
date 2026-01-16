@@ -41,13 +41,15 @@ export interface ProviderDAL {
    * @param name - Playlist name
    * @param description - Playlist description
    * @param trackIds - Array of track IDs to add
+   * @param musicUserToken - Optional user token (required for Apple Music)
    * @returns Raw created playlist data
    */
   createPlaylist(
     token: string,
     name: string,
     description: string,
-    trackIds: string[]
+    trackIds: string[],
+    musicUserToken?: string
   ): Promise<any>;
 
   /**
@@ -63,4 +65,11 @@ export interface ProviderDAL {
    * @returns The access token or null
    */
   getToken(sessionId: string): Promise<string | null>;
+
+  /**
+   * Retrieve a music user token (for Apple Music user library access)
+   * @param sessionId - The session identifier
+   * @returns The music user token or null (Spotify returns null)
+   */
+  getMusicUserToken?(sessionId: string): Promise<string | null>;
 }

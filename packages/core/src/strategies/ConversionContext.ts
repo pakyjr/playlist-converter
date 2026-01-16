@@ -40,13 +40,16 @@ export class ConversionContext {
   async executeConversion(
     playlist: UnifiedPlaylist,
     targetDAL: ProviderDAL,
-    targetToken: string
+    targetToken: string,
+    musicUserToken?: string,
+    delayMs?: number,
+    onProgress?: (current: number, total: number) => void
   ): Promise<ConversionResult> {
     if (!this.strategy) {
       throw new Error('No conversion strategy set. Use setStrategy() first.');
     }
 
-    return this.strategy.convert(playlist, targetDAL, targetToken);
+    return this.strategy.convert(playlist, targetDAL, targetToken, musicUserToken, delayMs, onProgress);
   }
 
   /**

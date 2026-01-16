@@ -2,43 +2,42 @@
  * Core Module - Main Entry Point
  *
  * This module orchestrates the design patterns:
- * - ABSTRACT FACTORY: ProviderFactoryRegistry creates provider components
+ * - ABSTRACT FACTORY: ProviderFactoryRegistry creates provider components (DAL + Adapter)
  * - ADAPTER: PlaylistAdapters normalize API responses
  * - STRATEGY: ConversionStrategies handle playlist conversion
+ *
+ * Note: Auth handlers are in the API layer since they handle HTTP/network responses.
  */
 
 import {
-  AllDal,
   ProviderDAL,
-  AuthHandler,
-  PlaylistAdapter,
-  MusicProviderFactory,
-  ConversionStrategy
+  PlaylistAdapter
 } from '@iuly/iuly-interfaces';
 import { MusicProvider, UnifiedPlaylist, ConversionResult } from '@iuly/iuly-models';
-import { SpotifyCore } from './spotify/core';
+import {
+  isPlaylistSizeAllowed,
+  getDelayForPlaylistSize,
+  getEstimatedTime,
+  PLAYLIST_TIERS
+} from '@iuly/iuly-utils';
 import { ProviderFactoryRegistry } from './factories/ProviderFactoryRegistry';
 import { StrategyRegistry } from './strategies/StrategyRegistry';
 import { ConversionContext } from './strategies/ConversionContext';
 
-// Export legacy singleton
-export * from './coreSingleton';
-
-// Export new pattern implementations
+// Export pattern implementations
 export * from './adapters';
 export * from './factories';
 export * from './strategies';
-export * from './auth';
 
 /**
  * ProviderCore - Generic core for any music provider
  *
- * Uses components created by the factory to perform operations.
+ * Uses DAL and Adapter created by the factory.
+ * Auth is handled at the API layer (not core's responsibility).
  */
 export class ProviderCore {
   constructor(
     private dal: ProviderDAL,
-    private authHandler: AuthHandler,
     private adapter: PlaylistAdapter,
     private provider: MusicProvider
   ) {}
@@ -53,15 +52,6 @@ export class ProviderCore {
     if (!rawPlaylist) return null;
 
     return this.adapter.adapt(rawPlaylist);
-  }
-
-  generateAuthUrl(sessionId: string): string {
-    return this.authHandler.generateAuthUrl(sessionId);
-  }
-
-  async handleAuthCallback(code: string, sessionId: string): Promise<void> {
-    const authToken = await this.authHandler.handleCallback(code, sessionId);
-    await this.dal.addSessionToken(authToken, sessionId);
   }
 
   async isAuthenticated(sessionId: string): Promise<boolean> {
@@ -87,29 +77,18 @@ export class ProviderCore {
 }
 
 /**
- * CoreIndex - Main orchestrator (refactored to use patterns)
+ * CoreIndex - Main orchestrator
  *
- * Maintains backwards compatibility with existing SpotifyCore
- * while adding support for multiple providers via factories.
+ * Uses the design patterns to handle playlist conversion:
+ * - Factory creates provider-specific DAL and Adapter
+ * - Strategy handles the conversion algorithm
  */
 export class CoreIndex {
-  // Legacy: Keep SpotifyCore for backwards compatibility
-  spotifyCore: SpotifyCore;
-
-  // New: Provider cores created via factories
   private providerCores: Map<MusicProvider, ProviderCore> = new Map();
-
-  // Conversion context for strategy pattern
   private conversionContext: ConversionContext;
 
-  constructor(allDal: AllDal) {
-    // Legacy initialization
-    this.spotifyCore = new SpotifyCore(allDal.spotify);
-
-    // New: Initialize provider cores using factories
+  constructor() {
     this.initializeProviderCores();
-
-    // Initialize conversion context
     this.conversionContext = new ConversionContext();
   }
 
@@ -118,7 +97,6 @@ export class CoreIndex {
       const factory = ProviderFactoryRegistry.getFactory(provider);
       const core = new ProviderCore(
         factory.createDAL(),
-        factory.createAuthHandler(),
         factory.createPlaylistAdapter(),
         provider
       );
@@ -153,7 +131,8 @@ export class CoreIndex {
     sourceProvider: MusicProvider,
     targetProvider: MusicProvider,
     sessionId: string,
-    playlistUrl: string
+    playlistUrl: string,
+    onProgress?: (current: number, total: number) => void
   ): Promise<ConversionResult> {
     // Get appropriate strategy
     const strategy = StrategyRegistry.getStrategy(sourceProvider, targetProvider);
@@ -168,20 +147,54 @@ export class CoreIndex {
       throw new Error('Failed to fetch source playlist');
     }
 
+    // Check playlist size limits
+    const trackCount = playlist.tracks.length;
+    if (!isPlaylistSizeAllowed(trackCount)) {
+      throw new Error(
+        `Playlist too large (${trackCount} tracks). ` +
+        `Maximum allowed is ${PLAYLIST_TIERS.MAX.maxTracks} tracks. ` +
+        `Please use a smaller playlist.`
+      );
+    }
+
+    // Determine delay based on playlist size
+    const delayMs = getDelayForPlaylistSize(trackCount);
+    console.log(`[CoreIndex] Playlist has ${trackCount} tracks, using ${delayMs}ms delay between requests`);
+
     // Get target DAL and token
     const targetCore = this.getProviderCore(targetProvider);
-    const targetToken = await targetCore.getDAL().getToken(sessionId);
+    const targetDAL = targetCore.getDAL();
+    const targetToken = await targetDAL.getToken(sessionId);
     if (!targetToken) {
       throw new Error(`Not authenticated with ${targetProvider}`);
     }
+
+    // Get music user token if available (needed for Apple Music playlist creation)
+    const musicUserToken = targetDAL.getMusicUserToken
+      ? await targetDAL.getMusicUserToken(sessionId)
+      : null;
 
     // Execute conversion using strategy
     this.conversionContext.setStrategy(strategy);
     return this.conversionContext.executeConversion(
       playlist,
-      targetCore.getDAL(),
-      targetToken
+      targetDAL,
+      targetToken,
+      musicUserToken ?? undefined,
+      delayMs,
+      onProgress
     );
+  }
+
+  /**
+   * Get playlist limits info for frontend
+   */
+  getPlaylistLimits() {
+    return {
+      small: { maxTracks: PLAYLIST_TIERS.SMALL.maxTracks, estimatedTimePerTrack: PLAYLIST_TIERS.SMALL.delayMs },
+      medium: { maxTracks: PLAYLIST_TIERS.MEDIUM.maxTracks, estimatedTimePerTrack: PLAYLIST_TIERS.MEDIUM.delayMs },
+      max: PLAYLIST_TIERS.MAX.maxTracks
+    };
   }
 
   /**

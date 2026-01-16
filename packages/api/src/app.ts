@@ -2,18 +2,20 @@ import express from "express";
 import cors from 'cors'
 import compression from 'compression'
 import session from 'express-session'
-import path from 'path'
 import { MainRouter } from './v1/mainRouter'
-import { CoreIndex, CoreSingleton } from "@iuly/iuly-core";
+import { CoreIndex } from "@iuly/iuly-core";
 import bodyParser from 'body-parser'
 
 export default function createApp() {
-  const coreIndex: CoreIndex = CoreSingleton.getCore()
+  const coreIndex = new CoreIndex();
 
   const mainRouter: MainRouter = new MainRouter(coreIndex);
   const app = express();
 
-  app.use(cors());
+  app.use(cors({
+    origin: 'http://127.0.0.1:5173',
+    credentials: true
+  }));
   app.use(compression());
   app.use(bodyParser.json());
   app.use(session({

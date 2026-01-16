@@ -4,11 +4,11 @@
  * STRATEGY PATTERN - Concrete Strategy
  *
  * Converts Apple Music playlists to Spotify.
- * Uses ISRC matching first (most accurate), then falls back to search.
+ * Extends BaseConversionStrategy - only provides adapter and response parsing.
  */
 
-import { ProviderDAL } from '@iuly/iuly-interfaces';
-import { UnifiedPlaylist, UnifiedTrack, ConversionResult, MusicProvider } from '@iuly/iuly-models';
+import { PlaylistAdapter } from '@iuly/iuly-interfaces';
+import { MusicProvider } from '@iuly/iuly-models';
 import { BaseConversionStrategy } from './BaseConversionStrategy';
 import { SpotifyPlaylistAdapter } from '../adapters/SpotifyPlaylistAdapter';
 
@@ -16,43 +16,27 @@ export class AppleToSpotifyStrategy extends BaseConversionStrategy {
   protected sourceProvider = MusicProvider.AppleMusic;
   protected targetProvider = MusicProvider.Spotify;
 
-  private adapter: SpotifyPlaylistAdapter;
+  private adapter = new SpotifyPlaylistAdapter();
 
-  constructor() {
-    super();
-    this.adapter = new SpotifyPlaylistAdapter();
+  protected getAdapter(): PlaylistAdapter {
+    return this.adapter;
   }
 
-  async convert(
-    source: UnifiedPlaylist,
-    targetDAL: ProviderDAL,
-    targetToken: string
-  ): Promise<ConversionResult> {
-    const matchedTracks: UnifiedTrack[] = [];
-    const unmatchedTracks: UnifiedTrack[] = [];
+  protected getDescription(sourceName: string): string {
+    return `Converted from Apple Music: ${sourceName}`;
+  }
 
-    console.log(`[AppleToSpotify] Converting playlist: ${source.name} (${source.tracks.length} tracks)`);
-
-    for (const track of source.tracks) {
-      // Try ISRC match first (most reliable)
-      let match = await this.matchByISRC(track, targetDAL, targetToken, this.adapter);
-
-      // Fall back to search if no ISRC match
-      if (!match) {
-        match = await this.matchBySearch(track, targetDAL, targetToken, this.adapter);
-      }
-
-      if (match) {
-        matchedTracks.push(match);
-        console.log(`  [MATCH] ${track.name} -> ${match.name}`);
-      } else {
-        unmatchedTracks.push(track);
-        console.log(`  [NO MATCH] ${track.name}`);
-      }
+  protected extractCreatedPlaylist(
+    result: any,
+    sourceName: string
+  ): { id: string; name: string; url?: string } | undefined {
+    if (result?.id) {
+      return {
+        id: result.id,
+        name: result.name || sourceName,
+        url: result.external_urls?.spotify || `https://open.spotify.com/playlist/${result.id}`
+      };
     }
-
-    console.log(`[AppleToSpotify] Complete: ${matchedTracks.length}/${source.tracks.length} matched`);
-
-    return this.createResult(source, matchedTracks, unmatchedTracks);
+    return undefined;
   }
 }

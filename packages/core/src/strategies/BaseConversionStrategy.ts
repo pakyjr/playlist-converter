@@ -3,8 +3,8 @@
  *
  * STRATEGY PATTERN - Abstract base for conversion strategies
  *
- * Provides common functionality for all conversion strategies,
- * such as track matching algorithms.
+ * Uses Template Method pattern - common conversion logic here,
+ * subclasses provide adapter and response parsing.
  */
 
 import { ConversionStrategy, ProviderDAL, PlaylistAdapter } from '@iuly/iuly-interfaces';
@@ -14,17 +14,137 @@ import {
   ConversionResult,
   MusicProvider
 } from '@iuly/iuly-models';
+import { delay, createLogger, Logger } from '@iuly/iuly-utils';
 
 export abstract class BaseConversionStrategy implements ConversionStrategy {
 
   protected abstract sourceProvider: MusicProvider;
   protected abstract targetProvider: MusicProvider;
 
-  abstract convert(
+  /** Get the adapter for the target provider */
+  protected abstract getAdapter(): PlaylistAdapter;
+
+  /** Get description for the new playlist */
+  protected abstract getDescription(sourceName: string): string;
+
+  /** Extract created playlist info from API response (provider-specific) */
+  protected abstract extractCreatedPlaylist(
+    result: any,
+    sourceName: string
+  ): { id: string; name: string; url?: string } | undefined;
+
+  /**
+   * Template method - handles the common conversion flow
+   */
+  async convert(
     source: UnifiedPlaylist,
     targetDAL: ProviderDAL,
-    targetToken: string
-  ): Promise<ConversionResult>;
+    targetToken: string,
+    musicUserToken?: string,
+    delayMs: number = 50,
+    onProgress?: (current: number, total: number) => void
+  ): Promise<ConversionResult> {
+    const matchedTracks: UnifiedTrack[] = [];
+    const unmatchedTracks: UnifiedTrack[] = [];
+    const totalTracks = source.tracks.length;
+    const adapter = this.getAdapter();
+    const log = createLogger(this.getKey());
+
+    log.info(`Converting playlist: ${source.name} (${totalTracks} tracks, ${delayMs}ms delay)`);
+
+    // Match each track
+    for (let i = 0; i < source.tracks.length; i++) {
+      const track = source.tracks[i];
+
+      if (onProgress) {
+        onProgress(i + 1, totalTracks);
+      }
+
+      // Try ISRC match first, then fall back to search
+      let match = await this.matchByISRC(track, targetDAL, targetToken, adapter);
+      if (!match) {
+        match = await this.matchBySearch(track, targetDAL, targetToken, adapter);
+      }
+
+      if (match) {
+        matchedTracks.push(match);
+        log.match(track.name, match.name);
+      } else {
+        unmatchedTracks.push(track);
+        log.noMatch(track.name);
+      }
+
+      // Rate limiting delay
+      if (i < source.tracks.length - 1 && delayMs > 0) {
+        await delay(delayMs);
+      }
+    }
+
+    log.info(`Complete: ${matchedTracks.length}/${totalTracks} matched`);
+
+    // Create playlist with matched tracks
+    const createdPlaylist = await this.createPlaylistOnTarget(
+      source,
+      matchedTracks,
+      targetDAL,
+      targetToken,
+      musicUserToken,
+      log
+    );
+
+    return this.createResult(source, matchedTracks, unmatchedTracks, createdPlaylist);
+  }
+
+  /**
+   * Create playlist on target provider with matched tracks
+   */
+  private async createPlaylistOnTarget(
+    source: UnifiedPlaylist,
+    matchedTracks: UnifiedTrack[],
+    targetDAL: ProviderDAL,
+    targetToken: string,
+    musicUserToken: string | undefined,
+    log: Logger
+  ): Promise<{ id: string; name: string; url?: string } | undefined> {
+    if (matchedTracks.length === 0) {
+      return undefined;
+    }
+
+    // Filter out tracks without valid IDs
+    const validTracks = matchedTracks.filter(t => t.originalId);
+    const invalidCount = matchedTracks.length - validTracks.length;
+
+    if (invalidCount > 0) {
+      log.warn(`${invalidCount} matched tracks have no valid originalId, skipping`);
+    }
+
+    if (validTracks.length === 0) {
+      log.warn(`No valid track IDs to add to playlist`);
+      return undefined;
+    }
+
+    const trackIds = validTracks.map(t => t.originalId);
+    const description = this.getDescription(source.name);
+
+    try {
+      const result = await targetDAL.createPlaylist(
+        targetToken,
+        source.name,
+        description,
+        trackIds,
+        musicUserToken
+      );
+
+      const createdPlaylist = this.extractCreatedPlaylist(result, source.name);
+      if (createdPlaylist) {
+        log.info(`Created playlist: ${createdPlaylist.name}`);
+      }
+      return createdPlaylist;
+    } catch (err: any) {
+      log.error(`Failed to create playlist: ${err.message}`);
+      return undefined;
+    }
+  }
 
   getSourceProvider(): MusicProvider {
     return this.sourceProvider;
@@ -161,7 +281,8 @@ export abstract class BaseConversionStrategy implements ConversionStrategy {
   protected createResult(
     originalPlaylist: UnifiedPlaylist,
     matchedTracks: UnifiedTrack[],
-    unmatchedTracks: UnifiedTrack[]
+    unmatchedTracks: UnifiedTrack[],
+    createdPlaylist?: { id: string; name: string; url?: string }
   ): ConversionResult {
     const totalTracks = originalPlaylist.tracks.length;
     const matchRate = totalTracks > 0
@@ -173,7 +294,8 @@ export abstract class BaseConversionStrategy implements ConversionStrategy {
       matchedTracks,
       unmatchedTracks,
       matchRate,
-      targetProvider: this.targetProvider
+      targetProvider: this.targetProvider,
+      createdPlaylist
     };
   }
 }

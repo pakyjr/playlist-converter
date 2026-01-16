@@ -4,13 +4,15 @@
  * Part of the ABSTRACT FACTORY PATTERN implementation.
  *
  * Abstract Factory that creates families of related objects
- * for each music provider. Ensures that all components
- * (DAL, AuthHandler, Adapter) are compatible with each other.
+ * for each music provider. Ensures that DAL and Adapter
+ * are compatible with each other.
+ *
+ * Note: Auth handlers are in the API layer (not created by factory)
+ * since they handle HTTP/network responses.
  */
 
 import { MusicProvider } from '@iuly/iuly-models';
 import { ProviderDAL } from './ProviderDAL';
-import { AuthHandler } from './AuthHandler';
 import { PlaylistAdapter } from './PlaylistAdapter';
 
 export interface MusicProviderFactory {
@@ -19,12 +21,6 @@ export interface MusicProviderFactory {
    * @returns Provider-specific DAL implementation
    */
   createDAL(): ProviderDAL;
-
-  /**
-   * Create the authentication handler for this provider
-   * @returns Provider-specific AuthHandler implementation
-   */
-  createAuthHandler(): AuthHandler;
 
   /**
    * Create the playlist adapter for this provider
